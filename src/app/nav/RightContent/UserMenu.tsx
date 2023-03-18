@@ -1,11 +1,14 @@
-"use client";
-import { Menu, Transition } from "@headlessui/react";
-import { Fragment } from "react";
-import { BiChevronDown } from "react-icons/bi";
-import { CgProfile } from "react-icons/cg";
-import { CiLogin } from "react-icons/ci";
+'use client'
+import { authModalAtom } from '@/atoms/authModalState'
+import { Menu, Transition } from '@headlessui/react'
+import { useSetAtom } from 'jotai'
+import { Fragment } from 'react'
+import { BiChevronDown } from 'react-icons/bi'
+import { CgProfile } from 'react-icons/cg'
+import { CiLogin } from 'react-icons/ci'
 
 const UserMenu = () => {
+  const setAuthModalState = useSetAtom(authModalAtom)
   return (
     <div className="flex items-center justify-center">
       <Menu as="div" className="relative inline-block text-left">
@@ -29,11 +32,14 @@ const UserMenu = () => {
               <Menu.Item>
                 {({ active }) => (
                   <button
-                    className={`${"text-gray-900 font-[600]"} group flex w-full items-center rounded-md py-2 text-sm`}
+                    className={`${'text-gray-900 font-[600]'} group flex w-full items-center rounded-md py-2 text-sm`}
+                    onClick={() =>
+                      setAuthModalState({ view: 'login', open: true })
+                    }
                   >
                     <div
                       className={`${
-                        active && "bg-blue-600 text-white"
+                        active && 'bg-blue-600 text-white'
                       } flex items-center space-x-2 w-full rounded-sm py-1`}
                     >
                       <CiLogin className="text-[25px]" />
@@ -47,7 +53,7 @@ const UserMenu = () => {
         </Transition>
       </Menu>
     </div>
-  );
-};
+  )
+}
 
-export default UserMenu;
+export default UserMenu
