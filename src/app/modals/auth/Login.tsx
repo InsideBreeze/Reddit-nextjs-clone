@@ -17,9 +17,11 @@ const Login = () => {
       <div>
         <input
           onChange={onChange}
+          name="email"
+          type="email"
           placeholder="email"
           className="w-full h-[38px] p-2 bg-gray-50 mb-2 outline-none pl-2 rounded-md border
-          hover:border-blue-500 focus:ring-1 placeholder:text-sm hover:bg-white shadow-sm
+          hover:border-blue-500 focus:ring-1 placeholder:text-base hover:bg-white placeholder:py-2 
           "
         />
       </div>
@@ -28,8 +30,10 @@ const Login = () => {
         <input
           onChange={onChange}
           placeholder="password"
+          name="password"
+          type="password"
           className="w-full h-[38px] p-2 bg-gray-50 mb-4 outline-none rounded-md hover:border-blue-500 border
-          focus:ring-1 placeholder:text-[10pt] hover:bg-white shadow-sm"
+          focus:ring-1 hover:bg-white placeholder:text-base"
         />
       </div>
       <button
