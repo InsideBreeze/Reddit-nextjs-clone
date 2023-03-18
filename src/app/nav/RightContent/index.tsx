@@ -4,7 +4,7 @@ import UserMenu from "./UserMenu";
 
 const RightContent = () => {
   return (
-    <div className="flex space-x-2">
+    <div className="flex space-x-2 items-center">
       {/* Icons */}
       <AuthButtons />
 
