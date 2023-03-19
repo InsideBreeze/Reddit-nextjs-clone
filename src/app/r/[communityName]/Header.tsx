@@ -10,13 +10,12 @@ interface Props {
   community: Community
 }
 const Header = ({ community }: Props) => {
-  const { communityState, loading } = useCommunityData()
+  const { communityState, loading, joinOrLeaveCommunity } = useCommunityData()
 
   const isJoined = !!communityState.joinedCommunities.find(
     c => c.communityName === community.communityName
   )
 
-  console.log(communityState)
   return (
     <div className="h-[146px]">
       <p className="bg-blue-500 h-[50%]" />
@@ -47,6 +46,7 @@ const Header = ({ community }: Props) => {
                       : 'bg-blue-500 text-white hover:bg-blue-600'
                   }
               rounded-full font-semibold`}
+                  onClick={() => joinOrLeaveCommunity(isJoined, community)}
                 >
                   {isJoined ? 'Joined' : 'Join'}
                 </button>
