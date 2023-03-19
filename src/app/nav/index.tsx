@@ -1,19 +1,22 @@
-import Image from "next/image";
-import React from "react";
-import SearchInput from "./SearchInput";
-import RightContent from "./RightContent";
+import Image from 'next/image'
+import React from 'react'
+import SearchInput from './SearchInput'
+import RightContent from './RightContent'
+import Directory from './Directory'
 
 const Navbar = () => {
   return (
-    <div className="bg-white h-[49px] px-[20px] flex items-center justify-between">
+    <div className="bg-white h-[49px] px-3 md:px-[20px] flex items-center justify-between">
       {/* logo */}
+      {/* you can set w and h by css from next13 */}
       <div className="flex items-center">
-        <div className="pr-2 py-2">
+        <div className="py-2 pr-2">
           <Image
             src="/images/redditFace.svg"
             alt="reddit_logo"
-            width={32}
-            height={32}
+            width="0"
+            height="0"
+            className="w-7 h-7 xl:w-8"
           />
         </div>
 
@@ -27,6 +30,7 @@ const Navbar = () => {
       </div>
 
       {/* directory */}
+      <Directory />
 
       {/* search input */}
       <SearchInput />
@@ -37,7 +41,7 @@ const Navbar = () => {
 
       {/* usre menu */}
     </div>
-  );
-};
+  )
+}
 
-export default Navbar;
+export default Navbar

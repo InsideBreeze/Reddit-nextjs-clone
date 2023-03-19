@@ -8,3 +8,9 @@
     @apply bg-gray-200
   }
 }
+
+@layer components {
+  .navButton {
+    @apply flex items-center justify-center p-1 rounded-md hover:bg-gray-400 hover:bg-opacity-20
+  }
+}

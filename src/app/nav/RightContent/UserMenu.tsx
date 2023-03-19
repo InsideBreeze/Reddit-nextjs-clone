@@ -1,20 +1,30 @@
 'use client'
 import { authModalAtom } from '@/atoms/authModalState'
+import { auth } from '@/firebase'
 import { Menu, Transition } from '@headlessui/react'
 import { useSetAtom } from 'jotai'
 import { Fragment } from 'react'
+import { useAuthState } from 'react-firebase-hooks/auth'
 import { BiChevronDown } from 'react-icons/bi'
 import { CgProfile } from 'react-icons/cg'
-import { CiLogin } from 'react-icons/ci'
+import { CiLogin, CiLogout } from 'react-icons/ci'
+import { FaRedditSquare } from 'react-icons/fa'
 
 const UserMenu = () => {
+  const [user] = useAuthState(auth)
   const setAuthModalState = useSetAtom(authModalAtom)
   return (
     <div className="flex items-center justify-center">
       <Menu as="div" className="relative inline-block text-left">
         <div>
           <Menu.Button className="flex items-center justify-center">
-            <CgProfile className="text-[27px] text-gray-400" />
+            {user ? (
+              <div>
+                <FaRedditSquare className="text-[25px] text-gray-400" />
+              </div>
+            ) : (
+              <CgProfile className="text-[27px] text-gray-400" />
+            )}
             <BiChevronDown className="text-[23px] text-gray-600" />
           </Menu.Button>
         </div>
@@ -27,8 +37,26 @@ const UserMenu = () => {
           leaveFrom="transform opacity-100 scale-100"
           leaveTo="transform opacity-0 scale-95"
         >
-          <Menu.Items className="absolute right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-            <div className="py-1 ">
+          <Menu.Items className="absolute right-0 w-56 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+            <div className="py-1 pl-2">
+              {user && (
+                <Menu.Item>
+                  {({ active }) => (
+                    <button
+                      className={`${'text-gray-900 font-[600]'} group flex w-full items-center rounded-md py-2 text-sm`}
+                    >
+                      <div
+                        className={`${
+                          active && 'bg-blue-600 text-white'
+                        } flex items-center space-x-2 w-full rounded-sm p-1`}
+                      >
+                        <CgProfile className="text-[23px]" />
+                        <p>Profile</p>
+                      </div>
+                    </button>
+                  )}
+                </Menu.Item>
+              )}
               <Menu.Item>
                 {({ active }) => (
                   <button
@@ -37,14 +65,25 @@ const UserMenu = () => {
                       setAuthModalState({ view: 'login', open: true })
                     }
                   >
-                    <div
-                      className={`${
-                        active && 'bg-blue-600 text-white'
-                      } flex items-center space-x-2 w-full rounded-sm py-1`}
-                    >
-                      <CiLogin className="text-[25px]" />
-                      <p>Login / Sign Up</p>
-                    </div>
+                    {user ? (
+                      <div
+                        className={`${
+                          active && 'bg-blue-600 text-white'
+                        } flex items-center space-x-2 w-full rounded-sm p-1`}
+                      >
+                        <CiLogout className="text-[25px]" />
+                        <p>Logout</p>
+                      </div>
+                    ) : (
+                      <div
+                        className={`${
+                          active && 'bg-blue-600 text-white'
+                        } flex items-center space-x-2 w-full rounded-sm py-1`}
+                      >
+                        <CiLogin className="text-[25px]" />
+                        <p>Login / Sign Up</p>
+                      </div>
+                    )}
                   </button>
                 )}
               </Menu.Item>
