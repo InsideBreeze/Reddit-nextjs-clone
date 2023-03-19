@@ -14,6 +14,7 @@ const AuthButtons = () => {
         Login
       </button>
       <button
+        onClick={() => setAuthModalState({ view: 'signUp', open: true })}
         className="flex items-center justify-center bg-blue-700 text-white border 
       border-blue-500 rounded-full px-3 md:px-6 h-[28px] font-semibold hover:bg-blue-500 text-sm"
       >

@@ -1,3 +1,5 @@
+import { authModalAtom } from '@/atoms/authModalState'
+import { useSetAtom } from 'jotai'
 import React, { useState } from 'react'
 
 const Login = () => {
@@ -5,6 +7,7 @@ const Login = () => {
     email: '',
     password: '',
   })
+  const setAuthModalState = useSetAtom(authModalAtom)
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFieldValues({
@@ -51,7 +54,10 @@ const Login = () => {
         </p>
         <p>
           New here?{' '}
-          <span className="text-blue-500 cursor-pointer hover:underline">
+          <span
+            className="text-blue-500 cursor-pointer hover:underline"
+            onClick={() => setAuthModalState({ view: 'signUp', open: true })}
+          >
             SIGN UP
           </span>
         </p>

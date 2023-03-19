@@ -1,5 +1,5 @@
 'use client'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { Fragment, useState } from 'react'
 import { useAtom } from 'jotai'
@@ -9,10 +9,22 @@ import SignUp from './SignUp'
 import ResetPassword from './ResetPassword'
 import { MdClose } from 'react-icons/md'
 import OAuthButtons from './OAuthButtons'
+import { useAuthState } from 'react-firebase-hooks/auth'
+import { auth } from '@/firebase'
 
 const AuthModal = () => {
   const [authModalState, setAuthModalState] = useAtom(authModalAtom)
 
+  const [user] = useAuthState(auth)
+
+  // sync user state
+  useEffect(() => {
+    if (user) {
+      setAuthModalState(prev => ({ ...prev, open: false }))
+    }
+  }, [user, setAuthModalState])
+
+  console.log(user)
   function closeModal() {
     setAuthModalState(prev => ({ ...prev, open: false }))
   }
@@ -34,7 +46,7 @@ const AuthModal = () => {
           </Transition.Child>
 
           <div className="fixed inset-0 overflow-y-auto">
-            <div className="flex mt-10 justify-center p-4 text-center">
+            <div className="flex justify-center p-4 mt-10 text-center">
               <Transition.Child
                 as={Fragment}
                 enter="ease-out duration-300"
@@ -44,17 +56,17 @@ const AuthModal = () => {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="relative flex flex-col w-full max-w-md transform overflow-hidden rounded-2xl bg-white px-16 py-2 shadow-xl transition-all">
+                <Dialog.Panel className="relative flex flex-col w-full max-w-md px-20 py-2 overflow-hidden transition-all transform bg-white shadow-xl rounded-2xl">
                   <Dialog.Title
                     as="h3"
-                    className=" text-lg font-medium leading-6 text-gray-900 text-center mb-4"
+                    className="mb-4 text-lg font-medium leading-6 text-center text-gray-900 "
                   >
                     {authModalState.view === 'login' && 'Login'}
                     {authModalState.view === 'signUp' && 'SignUp'}
                     {authModalState.view === 'resetPassword' &&
                       'Reset Password'}
                     <div
-                      className="flex items-center justify-center p-1 ml-auto cursor-pointer absolute right-3 top-2 hover:bg-opacity-30 hover:bg-gray-300 rounded-md"
+                      className="absolute flex items-center justify-center p-1 ml-auto rounded-md cursor-pointer right-3 top-2 hover:bg-opacity-30 hover:bg-gray-300"
                       onClick={() =>
                         setAuthModalState(prev => ({ ...prev, open: false }))
                       }
