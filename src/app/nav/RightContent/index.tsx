@@ -6,9 +6,12 @@ import AuthModal from '@/app/modals/auth'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { auth } from '@/firebase'
 import Icons from './Icons'
+import { User } from 'firebase/auth'
 
-const RightContent = () => {
-  const [user] = useAuthState(auth)
+interface Props {
+  user?: User | null
+}
+const RightContent = ({ user }: Props) => {
   return (
     <>
       <AuthModal />
@@ -17,7 +20,7 @@ const RightContent = () => {
         {user ? <Icons /> : <AuthButtons />}
 
         {/* UserMenu */}
-        <UserMenu />
+        <UserMenu user={user} />
       </div>
     </>
   )

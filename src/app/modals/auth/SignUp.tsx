@@ -1,7 +1,10 @@
 import { useSetAtom } from 'jotai'
 import { authModalAtom } from '@/atoms/authModalState'
 import React, { useState } from 'react'
-import { useCreateUserWithEmailAndPassword } from 'react-firebase-hooks/auth'
+import {
+  useCreateUserWithEmailAndPassword,
+  useUpdateProfile,
+} from 'react-firebase-hooks/auth'
 import { auth } from '@/firebase'
 import Spinner from '@/utils/Spinner'
 
@@ -14,9 +17,10 @@ const SignUp = () => {
 
   const [signUpError, setSignUpError] = useState('')
 
-  const [createUserWithEmailAndPassword, user, loading, error] =
+  const [createUserWithEmailAndPassword, _, loading, error] =
     useCreateUserWithEmailAndPassword(auth)
 
+  const [updateProfile] = useUpdateProfile(auth)
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFieldValues({
       ...fieldValues,
@@ -24,7 +28,7 @@ const SignUp = () => {
     })
   }
 
-  const onLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+  const onSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     // clear the error message
     setSignUpError('')
@@ -36,6 +40,9 @@ const SignUp = () => {
         fieldValues.email,
         fieldValues.password
       )
+      await updateProfile({
+        displayName: fieldValues.email.split('@')[0],
+      })
     } catch (error: any) {
       setSignUpError(error.message)
     }
@@ -43,7 +50,7 @@ const SignUp = () => {
 
   const setAuthModalState = useSetAtom(authModalAtom)
   return (
-    <form className="w-full" onSubmit={onLogin}>
+    <form className="w-full" onSubmit={onSignUp}>
       <div>
         <input
           onChange={onChange}

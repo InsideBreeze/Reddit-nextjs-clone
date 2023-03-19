@@ -1,5 +1,6 @@
 'use client'
 import { Menu, Transition } from '@headlessui/react'
+import { User } from 'firebase/auth'
 import { Fragment } from 'react'
 import { AiFillHome, AiOutlinePlus } from 'react-icons/ai'
 import { BiChevronDown } from 'react-icons/bi'

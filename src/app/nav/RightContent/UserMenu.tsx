@@ -2,6 +2,7 @@
 import { authModalAtom } from '@/atoms/authModalState'
 import { auth } from '@/firebase'
 import { Menu, Transition } from '@headlessui/react'
+import { User, signOut } from 'firebase/auth'
 import { useSetAtom } from 'jotai'
 import { Fragment } from 'react'
 import { useAuthState } from 'react-firebase-hooks/auth'
@@ -9,9 +10,13 @@ import { BiChevronDown } from 'react-icons/bi'
 import { CgProfile } from 'react-icons/cg'
 import { CiLogin, CiLogout } from 'react-icons/ci'
 import { FaRedditSquare } from 'react-icons/fa'
+import { IoSparkles } from 'react-icons/io5'
 
-const UserMenu = () => {
-  const [user] = useAuthState(auth)
+interface Props {
+  user?: User | null
+}
+
+const UserMenu = ({ user }: Props) => {
   const setAuthModalState = useSetAtom(authModalAtom)
   return (
     <div className="flex items-center justify-center">
@@ -19,8 +24,17 @@ const UserMenu = () => {
         <div>
           <Menu.Button className="flex items-center justify-center">
             {user ? (
-              <div>
-                <FaRedditSquare className="text-[25px] text-gray-400" />
+              <div className="flex items-center">
+                <div>
+                  <FaRedditSquare className="text-[25px] text-gray-400" />
+                </div>
+                <div className="flex-col hidden ml-1 mr-4 text-xs md:flex">
+                  <p className="font-semibold text-left">{user?.displayName}</p>
+                  <p className="flex items-center space-x-1">
+                    <IoSparkles className="text-[10px] text-[#FF3c00]" />
+                    <span>1 karma</span>
+                  </p>
+                </div>
               </div>
             ) : (
               <CgProfile className="text-[27px] text-gray-400" />
@@ -61,15 +75,13 @@ const UserMenu = () => {
                 {({ active }) => (
                   <button
                     className={`${'text-gray-900 font-[600]'} group flex w-full items-center rounded-md py-2 text-sm`}
-                    onClick={() =>
-                      setAuthModalState({ view: 'login', open: true })
-                    }
                   >
                     {user ? (
                       <div
                         className={`${
                           active && 'bg-blue-600 text-white'
                         } flex items-center space-x-2 w-full rounded-sm p-1`}
+                        onClick={() => signOut(auth)}
                       >
                         <CiLogout className="text-[25px]" />
                         <p>Logout</p>
@@ -79,6 +91,9 @@ const UserMenu = () => {
                         className={`${
                           active && 'bg-blue-600 text-white'
                         } flex items-center space-x-2 w-full rounded-sm py-1`}
+                        onClick={() =>
+                          setAuthModalState({ view: 'login', open: true })
+                        }
                       >
                         <CiLogin className="text-[25px]" />
                         <p>Login / Sign Up</p>

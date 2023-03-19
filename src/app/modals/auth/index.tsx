@@ -1,16 +1,15 @@
 'use client'
-import React, { useEffect } from 'react'
-import { Dialog, Transition } from '@headlessui/react'
-import { Fragment, useState } from 'react'
-import { useAtom } from 'jotai'
 import { authModalAtom } from '@/atoms/authModalState'
-import Login from './Login'
-import SignUp from './SignUp'
-import ResetPassword from './ResetPassword'
-import { MdClose } from 'react-icons/md'
-import OAuthButtons from './OAuthButtons'
-import { useAuthState } from 'react-firebase-hooks/auth'
 import { auth } from '@/firebase'
+import { Dialog, Transition } from '@headlessui/react'
+import { useAtom } from 'jotai'
+import { Fragment, useEffect } from 'react'
+import { useAuthState } from 'react-firebase-hooks/auth'
+import { MdClose } from 'react-icons/md'
+import Login from './Login'
+import OAuthButtons from './OAuthButtons'
+import ResetPassword from './ResetPassword'
+import SignUp from './SignUp'
 
 const AuthModal = () => {
   const [authModalState, setAuthModalState] = useAtom(authModalAtom)
@@ -24,15 +23,14 @@ const AuthModal = () => {
     }
   }, [user, setAuthModalState])
 
-  console.log(user)
-  function closeModal() {
-    setAuthModalState(prev => ({ ...prev, open: false }))
-  }
-
   return (
     <>
       <Transition appear show={authModalState.open} as={Fragment}>
-        <Dialog as="div" className="relative z-10" onClose={closeModal}>
+        <Dialog
+          as="div"
+          className="relative z-10"
+          onClose={() => setAuthModalState(prev => ({ ...prev, open: false }))}
+        >
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"

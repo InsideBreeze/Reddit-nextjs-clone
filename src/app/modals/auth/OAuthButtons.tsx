@@ -1,10 +1,17 @@
+import { auth } from '@/firebase'
 import Image from 'next/image'
 import React from 'react'
+import { useSignInWithGoogle } from 'react-firebase-hooks/auth'
 
 const OAuthButtons = () => {
+  const [signInWithGoogle] = useSignInWithGoogle(auth)
+
   return (
-    <div className="flex flex-col items-center space-y-3 mb-4 mt-2">
-      <p className="flex space-x-4 border rounded-full py-2 text-center w-full justify-center cursor-pointer hover:bg-gray-100">
+    <div className="flex flex-col items-center mt-2 mb-4 space-y-3">
+      <p
+        className="flex justify-center w-full py-2 space-x-4 text-center border rounded-full cursor-pointer hover:bg-gray-100"
+        onClick={() => signInWithGoogle()}
+      >
         <Image
           src="/images/GOOG.svg"
           height="0"
@@ -14,7 +21,7 @@ const OAuthButtons = () => {
         />
         <span>Continue with Google</span>
       </p>
-      <p className="flex space-x-4 border rounded-full py-2 text-center w-full justify-center cursor-pointer hover:bg-gray-100">
+      <p className="flex justify-center w-full py-2 space-x-4 text-center border rounded-full cursor-pointer hover:bg-gray-100">
         Some other providers
       </p>
 

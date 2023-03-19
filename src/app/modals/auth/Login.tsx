@@ -1,6 +1,9 @@
 import { authModalAtom } from '@/atoms/authModalState'
+import { auth } from '@/firebase'
+import Spinner from '@/utils/Spinner'
 import { useSetAtom } from 'jotai'
 import React, { useState } from 'react'
+import { useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth'
 
 const Login = () => {
   const [fieldValues, setFieldValues] = useState({
@@ -9,14 +12,22 @@ const Login = () => {
   })
   const setAuthModalState = useSetAtom(authModalAtom)
 
+  const [signInWithEmailAndPassword, user, loading, error] =
+    useSignInWithEmailAndPassword(auth)
+
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFieldValues({
       ...fieldValues,
       [e.target.name]: e.target.value,
     })
   }
+
+  const onLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    await signInWithEmailAndPassword(fieldValues.email, fieldValues.password)
+  }
   return (
-    <form className="w-full" onSubmit={() => {}}>
+    <form className="w-full" onSubmit={onLogin}>
       <div>
         <input
           onChange={onChange}
@@ -39,16 +50,25 @@ const Login = () => {
           focus:ring-1 hover:bg-white placeholder:text-base"
         />
       </div>
-      <button
-        type="submit"
-        className="w-full bg-blue-500 py-2 rounded-full text-white font-semibold hover:bg-blue-600"
-      >
-        Log in
-      </button>
+      {loading ? (
+        <Spinner />
+      ) : (
+        <button
+          type="submit"
+          className="w-full py-2 font-semibold text-white bg-blue-500 rounded-full hover:bg-blue-600"
+        >
+          Log in
+        </button>
+      )}
       <div className="mt-2 text-sm">
         <p>
           Forgot your password?{' '}
-          <span className="text-blue-500 cursor-pointer hover:underline">
+          <span
+            className="text-blue-500 cursor-pointer hover:underline"
+            onClick={() =>
+              setAuthModalState({ view: 'resetPassword', open: true })
+            }
+          >
             Reset
           </span>
         </p>
