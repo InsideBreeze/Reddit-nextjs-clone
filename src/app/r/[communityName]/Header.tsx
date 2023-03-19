@@ -1,12 +1,22 @@
+'use client'
 import React from 'react'
 import { Community } from '../../../../types'
 import Image from 'next/image'
 import { BsReddit } from 'react-icons/bs'
+import useCommunityData from '@/hooks/useCommunityData'
+import Spinner from '@/utils/Spinner'
 
 interface Props {
   community: Community
 }
 const Header = ({ community }: Props) => {
+  const { communityState, loading } = useCommunityData()
+
+  const isJoined = !!communityState.joinedCommunities.find(
+    c => c.communityName === community.communityName
+  )
+
+  console.log(communityState)
   return (
     <div className="h-[146px]">
       <p className="bg-blue-500 h-[50%]" />
@@ -27,12 +37,20 @@ const Header = ({ community }: Props) => {
                   r/{community.communityName}
                 </p>
               </div>
-              <button
-                className="border border-blue-500 h-[28px] px-6 text-white 
-              rounded-full bg-blue-500 font-semibold hover:bg-blue-600"
-              >
-                Join
-              </button>
+              {loading ? (
+                <Spinner />
+              ) : (
+                <button
+                  className={`border border-blue-500 h-[28px] px-5 ${
+                    isJoined
+                      ? 'text-blue-500 bg-white hover:gray-100'
+                      : 'bg-blue-500 text-white hover:bg-blue-600'
+                  }
+              rounded-full font-semibold`}
+                >
+                  {isJoined ? 'Joined' : 'Join'}
+                </button>
+              )}
             </div>
           </div>
         </div>
