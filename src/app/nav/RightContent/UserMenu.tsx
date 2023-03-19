@@ -22,7 +22,7 @@ const UserMenu = ({ user }: Props) => {
     <div className="flex items-center justify-center">
       <Menu as="div" className="relative inline-block text-left">
         <div>
-          <Menu.Button className="flex items-center justify-center">
+          <Menu.Button className="flex items-center justify-center outline-none">
             {user ? (
               <div className="flex items-center">
                 <div>

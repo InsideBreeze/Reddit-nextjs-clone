@@ -1,5 +1,9 @@
-import { Transition, Dialog } from '@headlessui/react'
+import { auth, db } from '@/firebase'
+import Spinner from '@/utils/Spinner'
+import { Dialog, Transition } from '@headlessui/react'
+import { doc, runTransaction, serverTimestamp } from 'firebase/firestore'
 import React, { Fragment, useState } from 'react'
+import { useAuthState } from 'react-firebase-hooks/auth'
 import { AiFillEye } from 'react-icons/ai'
 import { BsFillPersonFill } from 'react-icons/bs'
 import { HiLockClosed } from 'react-icons/hi'
@@ -12,8 +16,59 @@ interface Props {
 const CreateCommunity = ({ isOpen, closeModal }: Props) => {
   const [privacyType, setPrivacyType] = useState('public')
 
+  const [communityName, setCommunityName] = useState('')
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
+
+  const [user] = useAuthState(auth)
+
+  const remainingCount = 21 - communityName.length
+
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPrivacyType(e.target.value)
+  }
+
+  const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.value.length > 21) {
+      return
+    }
+    setCommunityName(e.target.value)
+  }
+
+  const createCommunity = async () => {
+    setError('')
+    try {
+      // check name is valid
+      if (!/^[a-zA-Z]+_?[a-zA-Z]+$/.test(communityName)) {
+        throw new Error('name can only contain alphatic and undersocre')
+      }
+      setLoading(true)
+      const communityDocRef = doc(db, 'communities', communityName)
+      await runTransaction(db, async transation => {
+        const communityDoc = await transation.get(communityDocRef)
+        // check name is not taken
+        if (communityDoc.exists()) {
+          throw new Error(`Sorry, /r/${communityName} is already taken`)
+        }
+        transation.set(communityDocRef, {
+          createdAt: serverTimestamp(),
+          numberOfMembers: 1,
+          creatorId: user?.uid,
+          privacyType: 'public',
+        })
+        // update user data
+        transation.set(
+          doc(db, `users/${user?.uid}/joinedCommunities`, communityName),
+          {
+            communityName,
+            isModerator: true,
+          }
+        )
+      })
+    } catch (error: any) {
+      setError(error.message)
+    }
+    setLoading(false)
   }
   return (
     <>
@@ -57,11 +112,20 @@ const CreateCommunity = ({ isOpen, closeModal }: Props) => {
                     <span className="relative pl-2 text-xl text-gray-300 top-7">
                       r/
                     </span>
-                    <input className="w-full h-8 pl-6 border rounded-md outline-none hover:border-blue-500 focus:ring-1" />
-                    <p className="text-sm text-gray-400">
-                      {21} characters remaining
+                    <input
+                      className="w-full h-8 pl-6 border rounded-md outline-none hover:border-blue-500 focus:ring-1"
+                      value={communityName}
+                      onChange={onInputChange}
+                    />
+                    <p
+                      className={`text-sm ${
+                        remainingCount === 0 ? 'text-[red]' : 'text-gray-400'
+                      }`}
+                    >
+                      {remainingCount} characters remaining
                     </p>
                     <div className="mt-4">
+                      <p className="text-[red] text-sm">{error && error}</p>
                       <p className="font-medium">Community Type</p>
                       <div className="flex items-center space-x-1 text-gray-600">
                         <input
@@ -114,12 +178,16 @@ const CreateCommunity = ({ isOpen, closeModal }: Props) => {
                     >
                       Cancel
                     </button>
-                    <button
-                      className="px-3 py-1 font-semibold text-white bg-blue-500 rounded-full"
-                      onClick={() => {}}
-                    >
-                      Create Community
-                    </button>
+                    {loading ? (
+                      <Spinner />
+                    ) : (
+                      <button
+                        className="px-3 py-1 font-semibold text-white bg-blue-500 rounded-full hover:bg-blue-600"
+                        onClick={createCommunity}
+                      >
+                        Create Community
+                      </button>
+                    )}
                   </div>
                 </Dialog.Panel>
               </Transition.Child>

@@ -1,12 +1,14 @@
 import { useSetAtom } from 'jotai'
 import { authModalAtom } from '@/atoms/authModalState'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
+  useAuthState,
   useCreateUserWithEmailAndPassword,
   useUpdateProfile,
 } from 'react-firebase-hooks/auth'
-import { auth } from '@/firebase'
+import { auth, db } from '@/firebase'
 import Spinner from '@/utils/Spinner'
+import { collection, doc, setDoc } from 'firebase/firestore'
 
 const SignUp = () => {
   const [fieldValues, setFieldValues] = useState({
@@ -16,6 +18,8 @@ const SignUp = () => {
   })
 
   const [signUpError, setSignUpError] = useState('')
+
+  const [user] = useAuthState(auth)
 
   const [createUserWithEmailAndPassword, _, loading, error] =
     useCreateUserWithEmailAndPassword(auth)
@@ -36,17 +40,34 @@ const SignUp = () => {
       if (fieldValues.password !== fieldValues.passwordConfirm) {
         throw new Error('password and passwordConfirm are not matched')
       }
-      await createUserWithEmailAndPassword(
+      const userCred = await createUserWithEmailAndPassword(
         fieldValues.email,
         fieldValues.password
       )
       await updateProfile({
         displayName: fieldValues.email.split('@')[0],
       })
+      // add to users db or useEffect is better??
+      if (userCred) {
+        await setDoc(
+          doc(db, `users/${userCred.user.uid}`),
+          JSON.parse(JSON.stringify(userCred.user))
+        )
+      }
     } catch (error: any) {
       setSignUpError(error.message)
     }
   }
+
+  // // should use useEffect
+  // useEffect(() => {
+  //   if (userCred) {
+  //     setDoc(
+  //       doc(db, `users/${userCred.user.uid}`),
+  //       JSON.parse(JSON.stringify(userCred.user))
+  //     )
+  //   }
+  // }, [userCred])
 
   const setAuthModalState = useSetAtom(authModalAtom)
   return (
