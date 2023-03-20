@@ -6,6 +6,8 @@ import { IoDocumentText, IoImageOutline } from 'react-icons/io5'
 import { BsLink45Deg, BsMic } from 'react-icons/bs'
 import { BiPoll } from 'react-icons/bi'
 import TabItem from './TabItem'
+import NewPostForm from './NewPostForm'
+import UploadImage from './UploadImage'
 
 interface TabItem {
   Icon: IconType
@@ -44,16 +46,21 @@ const SubmitPage = () => {
             Create a post
           </p>
         </div>
-        <div className="flex bg-white">
-          {tabs.map(tab => (
-            <TabItem
-              key={tab.name}
-              Icon={tab.Icon}
-              name={tab.name}
-              selected={seletedTab === tab.name}
-              setSeletedTab={() => setSeletedTab(tab.name)}
-            />
-          ))}
+        <div className="bg-white rounded-md">
+          <div className="flex">
+            {tabs.map(tab => (
+              <TabItem
+                key={tab.name}
+                Icon={tab.Icon}
+                name={tab.name}
+                selected={seletedTab === tab.name}
+                selectTab={() => setSeletedTab(tab.name)}
+              />
+            ))}
+          </div>
+          {/* send post/image form */}
+          {seletedTab === 'Post' && <NewPostForm />}
+          {seletedTab === 'Image & Video' && <UploadImage />}
         </div>
       </>
 
