@@ -1,34 +1,143 @@
+import { db, storage } from '@/firebase'
+import useSelectFile from '@/hooks/useSelectFile'
+import { User } from 'firebase/auth'
+import {
+  Timestamp,
+  addDoc,
+  collection,
+  serverTimestamp,
+  updateDoc,
+} from 'firebase/firestore'
+import { getDownloadURL, ref, uploadString } from 'firebase/storage'
+import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
+import { IconType } from 'react-icons'
+import { BiPoll } from 'react-icons/bi'
+import { BsLink45Deg, BsMic } from 'react-icons/bs'
+import { IoDocumentText, IoImageOutline } from 'react-icons/io5'
+import { Post } from '../../../../../types'
+import TabItem from './TabItem'
+import TextInputs from './TextInputs'
+import UploadImage from './UploadImage'
+
+interface TabItem {
+  Icon: IconType
+  name: string
+}
+
+const tabs: TabItem[] = [
+  {
+    Icon: IoDocumentText,
+    name: 'Post',
+  },
+  {
+    Icon: IoImageOutline,
+    name: 'Image & Video',
+  },
+  {
+    Icon: BsLink45Deg,
+    name: 'Link',
+  },
+  {
+    Icon: BiPoll,
+    name: 'Poll',
+  },
+  {
+    Icon: BsMic,
+    name: 'Talk',
+  },
+]
 
 interface Props {
-  onTextChange: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => void
-  createPost: () => void
+  communityName: string
+  user: User
 }
-const NewPostForm = ({ onTextChange, createPost }: Props) => {
+const NewPostForm = ({ communityName, user }: Props) => {
+  const [seletedTab, setSeletedTab] = useState('Post')
+  const [fieldValues, setFieldValues] = useState({
+    title: '',
+    body: '',
+  })
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+
+  const { selectedFile, setSelectedFile, onSelectFile } = useSelectFile()
+
+  const router = useRouter()
+
+  const onTextChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setFieldValues({
+      ...fieldValues,
+      [e.target.name]: e.target.value,
+    })
+  }
+
+  // essential function
+  const createPost = async () => {
+    const newPost: Post = {
+      title: fieldValues.title,
+      body: fieldValues.body,
+      creatorId: user.uid,
+      createdAt: serverTimestamp() as Timestamp,
+      communityName: communityName,
+      numberOfComments: 0,
+      voteStatus: 0,
+      creatorName: user.displayName!,
+    }
+
+    setLoading(true)
+    try {
+      const postDoc = await addDoc(collection(db, 'posts'), newPost)
+      if (selectedFile) {
+        const imageRef = ref(storage, `/posts/${postDoc.id}/image`)
+        await uploadString(imageRef, selectedFile, 'data_url')
+        const downloadURL = await getDownloadURL(imageRef)
+
+        // then update the doc
+        await updateDoc(postDoc, {
+          postImage: downloadURL,
+        })
+      }
+      router.back()
+    } catch (error: any) {
+      setError(error.message)
+    }
+    setLoading(false)
+  }
+
   return (
-    <div className="flex flex-col p-4 space-y-3">
-      <input
-        name="title"
-        placeholder="Title"
-        className="h-10 pl-3 border rounded-md outline-none focus:ring-1"
-        onChange={onTextChange}
-      />
-      <textarea
-        name="body"
-        placeholder="Text(optional)"
-        className="border outline-none min-h-[80px] rounded-md pl-3 pt-2 focus:ring-1"
-        onChange={onTextChange}
-      />
-      <div className="flex justify-end">
-        <button
-          className="px-5 py-1 font-medium text-white bg-blue-500 rounded-full hover:bg-blue-400"
-          onClick={createPost}
-        >
-          Post
-        </button>
+    <div className="bg-white rounded-md">
+      {error && <p className="text-[red] text-sm text-center">{error}</p>}
+      <div className="flex">
+        {tabs.map(tab => (
+          <TabItem
+            key={tab.name}
+            Icon={tab.Icon}
+            name={tab.name}
+            selected={seletedTab === tab.name}
+            selectTab={() => setSeletedTab(tab.name)}
+          />
+        ))}
       </div>
+      {/* send post/image form */}
+      {seletedTab === 'Post' && (
+        <TextInputs
+          fieldValues={fieldValues}
+          onTextChange={onTextChange}
+          createPost={createPost}
+          loading={loading}
+        />
+      )}
+      {seletedTab === 'Image & Video' && (
+        <UploadImage
+          onSelectFile={onSelectFile}
+          selectedFile={selectedFile}
+          clearSelectedFile={() => setSelectedFile('')}
+          backToPost={() => setSeletedTab('Post')}
+        />
+      )}
     </div>
   )
 }

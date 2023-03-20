@@ -12,7 +12,6 @@ export interface Community {
 interface User {}
 
 export interface Post {
-  id: string
   title: string
   body: string
   creatorId: string
@@ -21,4 +20,5 @@ export interface Post {
   communityName: string
   numberOfComments: number
   voteStatus: number
+  creatorName: string
 }
