@@ -10,3 +10,15 @@ export interface Community {
 }
 
 interface User {}
+
+export interface Post {
+  id: string
+  title: string
+  body: string
+  creatorId: string
+  postImage?: string
+  createdAt: Timestamp
+  communityName: string
+  numberOfComments: number
+  voteStatus: number
+}
