@@ -13,4 +13,7 @@
   .navButton {
     @apply flex items-center justify-center p-1 rounded-md hover:bg-gray-400 hover:bg-opacity-20 cursor-pointer
   }
+  .postIcon {
+    @apply flex items-center justify-center px-2 py-1 space-x-2 hover:bg-gray-200 cursor-pointer rounded-md
+  }
 }
