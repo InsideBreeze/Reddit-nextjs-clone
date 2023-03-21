@@ -3,6 +3,7 @@ import { auth } from '@/firebase'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import PageContent from '../PageContent'
 import NewPostForm from './NewPostForm'
+import About from '../About'
 
 const SubmitPage = ({
   params,
@@ -28,7 +29,9 @@ const SubmitPage = ({
         <NewPostForm communityName={params.communityName} user={user} />
       </>
 
-      <></>
+      <>
+        <About communityName={params.communityName} />
+      </>
     </PageContent>
   )
 }
