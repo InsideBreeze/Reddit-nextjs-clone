@@ -1,8 +1,34 @@
 import React from 'react'
 import { BiDotsHorizontalRounded } from 'react-icons/bi'
 import { RiCakeLine } from 'react-icons/ri'
+import { Community } from '../../../../types'
+import { db } from '@/firebase'
+import { getDoc, doc } from 'firebase/firestore'
 
-const About = () => {
+interface Props {
+  community?: Community
+  communityName?: string
+}
+
+const About = async ({ community, communityName }: Props) => {
+  //if community is undefined, fetch it?? but how can I know the name of community?
+  // there are two situations to use this component, know commmunityData or only Know the name of community from router
+
+  let communityData: Community
+  if (community) {
+    communityData = community
+  } else if (communityName) {
+    const communityDoc = await getDoc(doc(db, 'communities', communityName))
+
+    const communityDocData = communityDoc.data()
+    JSON.parse(
+      JSON.stringify({
+        communityName,
+        ...communityDocData,
+        createdAt: communityDocData?.createdAt.toJSON(),
+      })
+    ) as Community
+  }
   return (
     <div className="flex w-full flex-col">
       <div className="bg-blue-500 p-3 w-full justify-between items-center flex text-white rounded-t-md">
@@ -13,7 +39,7 @@ const About = () => {
         <div className="divide-y-[1.5px] divide-gray-300">
           <div className="p-2 flex font-semibold">
             <div className="flex-1">
-              <p>5</p>
+              <p>{communityData.numberOfMembers.toLocaleString()}</p>
               <p>Members</p>
             </div>
             <div className="flex-1">

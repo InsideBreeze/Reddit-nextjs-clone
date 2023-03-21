@@ -15,7 +15,6 @@ import { IconType } from 'react-icons'
 import { BiPoll } from 'react-icons/bi'
 import { BsLink45Deg, BsMic } from 'react-icons/bs'
 import { IoDocumentText, IoImageOutline } from 'react-icons/io5'
-import { Post } from '../../../../../types'
 import TabItem from './TabItem'
 import TextInputs from './TextInputs'
 import UploadImage from './UploadImage'
@@ -76,19 +75,20 @@ const NewPostForm = ({ communityName, user }: Props) => {
 
   // essential function
   const createPost = async () => {
-    const newPost: Post = {
-      title: fieldValues.title,
-      body: fieldValues.body,
-      creatorId: user.uid,
-      createdAt: serverTimestamp() as Timestamp,
-      communityName: communityName,
-      numberOfComments: 0,
-      voteStatus: 0,
-      creatorName: user.displayName!,
-    }
-
     setLoading(true)
     try {
+      const newPost = {
+        //    id: docRef.id,
+        title: fieldValues.title,
+        body: fieldValues.body,
+        creatorId: user.uid,
+        createdAt: serverTimestamp() as Timestamp,
+        communityName: communityName,
+        numberOfComments: 0,
+        voteStatus: 0,
+        creatorName: user.displayName!,
+      }
+
       const postDoc = await addDoc(collection(db, 'posts'), newPost)
       if (selectedFile) {
         const imageRef = ref(storage, `/posts/${postDoc.id}/image`)

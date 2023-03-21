@@ -1,6 +1,6 @@
 // this hook is mainly used to fetch posts, then store them to the state
 
-import { postDataAtom } from '@/atoms/postData'
+import { postDataAtom } from '@/atoms/postDataState'
 import { useAtom } from 'jotai'
 
 const usePosts = () => {

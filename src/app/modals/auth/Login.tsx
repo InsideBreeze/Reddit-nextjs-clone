@@ -12,6 +12,7 @@ const Login = () => {
   })
   const setAuthModalState = useSetAtom(authModalAtom)
 
+  // TODO: show error
   const [signInWithEmailAndPassword, user, loading, error] =
     useSignInWithEmailAndPassword(auth)
 
