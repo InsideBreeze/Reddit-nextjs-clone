@@ -15,7 +15,7 @@ interface Props {
 }
 const PostItem = ({ post }: Props) => {
   return (
-    <div className="flex mt-4 border border-blue-500">
+    <div className="flex mt-4 border hover:border-blue-300">
       <div className="bg-gray-50 pt-2 px-3 flex flex-col items-center text-gray-700">
         <BsArrowUpCircle className="text-[16px] cursor-pointer" />
         {post.voteStatus}

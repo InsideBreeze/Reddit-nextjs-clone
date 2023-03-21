@@ -7,7 +7,7 @@ const PageContent = ({ children }: { children: React.ReactNode[] }) => {
         {/* left hand */}
         <div className="flex flex-col w-[100%] md:w-[65%]">{children[0]}</div>
         {/* right hand */}
-        <div className="ml-6 flex-col hidden md:flex border-[red] border flex-1">
+        <div className="ml-6 flex-col hidden md:flex flex-1 rounded-lg">
           {children[1]}
         </div>
       </div>

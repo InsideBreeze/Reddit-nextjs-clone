@@ -7,6 +7,7 @@ import { notFound } from 'next/navigation'
 import PageContent from './PageContent'
 import CreatePostLink from './CreatePostLink'
 import Posts from './Posts'
+import About from './About'
 
 const CommunityPage = async ({
   params,
@@ -42,7 +43,10 @@ const CommunityPage = async ({
           {/* Posts */}
           <Posts community={community} />
         </>
-        <>{/* About */}</>
+        <>
+          {/* About */}
+          <About />
+        </>
       </PageContent>
     </>
   )
