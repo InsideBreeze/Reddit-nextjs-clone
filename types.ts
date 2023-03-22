@@ -20,6 +20,6 @@ export interface Post {
   createdAt: Timestamp
   communityName: string
   numberOfComments: number
-  voteStatus: number
+  numberOfVotes: number
   creatorName: string
 }

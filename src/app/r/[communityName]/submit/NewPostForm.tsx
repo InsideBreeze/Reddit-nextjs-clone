@@ -85,7 +85,7 @@ const NewPostForm = ({ communityName, user }: Props) => {
         createdAt: serverTimestamp() as Timestamp,
         communityName: communityName,
         numberOfComments: 0,
-        voteStatus: 0,
+        numberOfVotes: 0,
         creatorName: user.displayName!,
       }
 
