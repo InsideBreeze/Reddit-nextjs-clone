@@ -78,8 +78,6 @@ const Posts = ({ community }: Props) => {
 
   console.log('posts', posts)
 
-  loading
-
   return (
     <>
       {loading ? (

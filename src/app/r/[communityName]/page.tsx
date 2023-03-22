@@ -1,23 +1,33 @@
-import React from 'react'
-import Header from './Header'
-import { doc, getDoc, onSnapshot } from 'firebase/firestore'
 import { db } from '@/firebase'
-import { Community } from '../../../../types'
+import { doc, getDoc } from 'firebase/firestore'
 import { notFound } from 'next/navigation'
-import PageContent from './PageContent'
-import CreatePostLink from './CreatePostLink'
-import Posts from './Posts'
+import { Community } from '../../../../types'
 import About from './About'
-import { useSetAtom } from 'jotai'
-import { communityStateAtom } from '@/atoms/communityDataState'
+import CreatePostLink from './CreatePostLink'
+import Header from './Header'
+import PageContent from './PageContent'
+import Posts from './Posts'
+
+const fetchCurrentCommunity = async (communityName: string) => {
+  const communityDoc = await getDoc(doc(db, 'communities', communityName))
+  if (!communityDoc.exists) return undefined
+  const communityData = communityDoc.data()
+  return JSON.parse(
+    JSON.stringify({
+      communityName,
+      ...communityData,
+      createdAt: communityData?.createdAt.toJSON(),
+    })
+  ) as Community
+}
 
 const CommunityPage = async ({
   params,
 }: {
   params: { communityName: string }
 }) => {
-  // const setCommunityState = useSetAtom(communityStateAtom)
-  // current community, store it to the state? but i will make
+  //  const setCommunityState = useSetAtom(communityStateAtom)
+  //  current community, store it to the state? but i will make
   const communityDoc = await getDoc(
     doc(db, 'communities', params.communityName)
   )
@@ -26,10 +36,7 @@ const CommunityPage = async ({
   if (!communityDoc.exists()) {
     notFound()
   }
-  // const community = {
-  //   communityName: params.communityName,
-  //   ...communityData,
-  // } as Community
+
   const community = JSON.parse(
     JSON.stringify({
       communityName: params.communityName,
@@ -37,12 +44,6 @@ const CommunityPage = async ({
       createdAt: communityData?.createdAt.toJSON(),
     })
   ) as Community
-  // setCommunityState(prev => ({
-  //   ...prev,
-  //   currentCommunity: community,
-  // }))
-
-  //
 
   return (
     <>
@@ -50,7 +51,7 @@ const CommunityPage = async ({
       <PageContent>
         <>
           {/* Create Post Link*/}
-          <CreatePostLink communityName={community.communityName} />
+          <CreatePostLink communityName={params.communityName} />
           {/* Posts */}
           <Posts community={community} />
         </>
