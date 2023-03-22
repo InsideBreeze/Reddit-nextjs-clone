@@ -22,8 +22,14 @@ const Header = ({ community }: Props) => {
       <div className="h-[50%] bg-white">
         <div className="border border-[red] w-[95%] max-w-[860px] mx-auto">
           <div className="flex">
-            {community.communityImage ? (
-              <Image height="0" width="0" alt="" src="" />
+            {communityState.currentCommunity?.communityImage ? (
+              <Image
+                height={100}
+                width={100}
+                alt=""
+                src={communityState.currentCommunity.communityImage}
+                className="w-[64px] h-[64px] rounded-full"
+              />
             ) : (
               <BsReddit className="text-[64px] text-brand-100 relative -top-3 rounded-[50%] border-4 border-white" />
             )}

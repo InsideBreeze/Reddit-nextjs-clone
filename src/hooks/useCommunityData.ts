@@ -18,9 +18,10 @@ interface Props {
   communityName?: string
 }
 // this hook is used to pull data to state and some other utility functions
-const useCommunityData = (communityName: string | undefined) => {
+const useCommunityData = (communityName?: string) => {
   const [communityState, setCommunityState] = useAtom(communityStateAtom)
   const [loading, setLoading] = useState(false)
+  const [pageExists, setpageExists] = useState(true)
 
   const [user] = useAuthState(auth)
 
@@ -119,10 +120,12 @@ const useCommunityData = (communityName: string | undefined) => {
       const communityDoc = await getDoc(
         doc(db, 'communities', communityName as string)
       )
-      if (!communityDoc.exists) {
-        notFound()
+      if (!communityDoc.exists()) {
+        setpageExists(false)
+        return
       }
       const communityData = communityDoc.data()
+      console.log('communityData')
       setCommunityState(prev => ({
         ...prev,
         currentCommunity: JSON.parse(
@@ -143,12 +146,14 @@ const useCommunityData = (communityName: string | undefined) => {
     if (communityName) {
       fetchCurrentCommunity()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [communityName])
 
   return {
     communityState,
     loading,
     joinOrLeaveCommunity,
+    pageExists,
   }
 }
 

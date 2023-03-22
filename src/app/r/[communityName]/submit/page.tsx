@@ -1,15 +1,10 @@
 'use client'
-import { auth, db } from '@/firebase'
+import { auth } from '@/firebase'
+import useCommunityData from '@/hooks/useCommunityData'
 import { useAuthState } from 'react-firebase-hooks/auth'
+import About from '../About'
 import PageContent from '../PageContent'
 import NewPostForm from './NewPostForm'
-import About from '../About'
-import { getDoc, doc } from 'firebase/firestore'
-import { Community } from '../../../../../types'
-import { use } from 'react'
-import { useAtomValue } from 'jotai'
-import { communityStateAtom } from '@/atoms/communityDataState'
-import useCommunityData from '@/hooks/useCommunityData'
 
 const SubmitPage = ({
   params,
