@@ -1,3 +1,4 @@
+'use client'
 import { auth, db } from '@/firebase'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import PageContent from '../PageContent'
@@ -6,21 +7,11 @@ import About from '../About'
 import { getDoc, doc } from 'firebase/firestore'
 import { Community } from '../../../../../types'
 import { use } from 'react'
+import { useAtomValue } from 'jotai'
+import { communityStateAtom } from '@/atoms/communityDataState'
+import useCommunityData from '@/hooks/useCommunityData'
 
-const fetchCurrentCommunity = async (communityName: string) => {
-  const communityDoc = await getDoc(doc(db, 'communities', communityName))
-  if (!communityDoc.exists) return undefined
-  const communityData = communityDoc.data()
-  return JSON.parse(
-    JSON.stringify({
-      communityName,
-      ...communityData,
-      createdAt: communityData?.createdAt.toJSON(),
-    })
-  ) as Community
-}
-
-const SubmitPage = async ({
+const SubmitPage = ({
   params,
 }: {
   params: {
@@ -29,9 +20,11 @@ const SubmitPage = async ({
 }) => {
   const [user] = useAuthState(auth)
 
-  const community = use(fetchCurrentCommunity(params.communityName))
+  const {
+    communityState: { currentCommunity },
+  } = useCommunityData(params.communityName)
 
-  if (!user || !community) {
+  if (!user) {
     // TODO: skeleton
     return <p>loading</p>
   }
@@ -46,7 +39,7 @@ const SubmitPage = async ({
         <NewPostForm communityName={params.communityName} user={user} />
       </>
 
-      <>{/* <About community={community} /> */}</>
+      <>{currentCommunity && <About community={currentCommunity} />}</>
     </PageContent>
   )
 }

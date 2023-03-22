@@ -3,6 +3,7 @@ import { auth, db } from '@/firebase'
 import {
   collection,
   doc,
+  getDoc,
   getDocs,
   increment,
   writeBatch,
@@ -11,9 +12,13 @@ import { useAtom } from 'jotai'
 import { useEffect, useState } from 'react'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { Community } from '../../types'
+import { notFound } from 'next/navigation'
 
+interface Props {
+  communityName?: string
+}
 // this hook is used to pull data to state and some other utility functions
-const useCommunityData = () => {
+const useCommunityData = (communityName: string | undefined) => {
   const [communityState, setCommunityState] = useAtom(communityStateAtom)
   const [loading, setLoading] = useState(false)
 
@@ -107,6 +112,38 @@ const useCommunityData = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user])
+
+  const fetchCurrentCommunity = async () => {
+    setLoading(true)
+    try {
+      const communityDoc = await getDoc(
+        doc(db, 'communities', communityName as string)
+      )
+      if (!communityDoc.exists) {
+        notFound()
+      }
+      const communityData = communityDoc.data()
+      setCommunityState(prev => ({
+        ...prev,
+        currentCommunity: JSON.parse(
+          JSON.stringify({
+            communityName: communityName,
+            ...communityData,
+            createdAt: communityData?.createdAt.toJSON(),
+          })
+        ),
+      }))
+    } catch (error) {
+      console.log('fetchCurrentCommunity error', error)
+    }
+  }
+
+  // when run this hook, it will fetch current Name, if communityName is given
+  useEffect(() => {
+    if (communityName) {
+      fetchCurrentCommunity()
+    }
+  }, [communityName])
 
   return {
     communityState,
