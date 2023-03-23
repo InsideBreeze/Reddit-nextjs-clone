@@ -1,35 +1,29 @@
 'use client'
-import React, { useEffect, useState } from 'react'
-import { Post } from '../../../../../types'
-import Image from 'next/image'
-import {
-  BsChat,
-  BsBookmark,
-  BsArrowUpCircle,
-  BsArrowDownCircle,
-} from 'react-icons/bs'
-import { RiShareForwardLine } from 'react-icons/ri'
-import { FiTrash } from 'react-icons/fi'
+import { postDataAtom } from '@/atoms/postDataState'
+import { auth, db } from '@/firebase'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import {
-  addDoc,
-  collection,
   deleteDoc,
   doc,
   getDoc,
   increment,
-  orderBy,
-  query,
-  setDoc,
-  updateDoc,
-  where,
   writeBatch,
 } from 'firebase/firestore'
-import { auth, db } from '@/firebase'
 import { useAtom } from 'jotai'
-import { postDataAtom } from '@/atoms/postDataState'
+import Image from 'next/image'
+import { useEffect, useState } from 'react'
 import { useAuthState } from 'react-firebase-hooks/auth'
+import { BsBookmark, BsChat } from 'react-icons/bs'
+import { FiTrash } from 'react-icons/fi'
+import { RiShareForwardLine } from 'react-icons/ri'
+import {
+  TiArrowDownOutline,
+  TiArrowDownThick,
+  TiArrowUpOutline,
+  TiArrowUpThick,
+} from 'react-icons/ti'
+import { Post } from '../../../../../types'
 
 dayjs.extend(relativeTime)
 
@@ -81,7 +75,7 @@ const PostItem = ({ post }: Props) => {
           ),
         }))
         setvoteStatus(1)
-      } else if (voteStatus == 1) {
+      } else if (voteStatus === 1) {
         batch.delete(doc(db, `users/${user?.uid}/votedPosts/${post.id}`))
         batch.update(doc(db, `posts/${post.id}`), {
           numberOfVotes: increment(-1),
@@ -95,6 +89,7 @@ const PostItem = ({ post }: Props) => {
               : item
           ),
         }))
+        console.log('set vote status', 0)
         setvoteStatus(0)
       } else {
         batch.update(doc(db, `users/${user?.uid}/votedPosts/${post.id}`), {
@@ -201,15 +196,35 @@ const PostItem = ({ post }: Props) => {
   return (
     <div className="flex mt-4 border hover:border-blue-300">
       <div className="flex flex-col items-center px-3 pt-2 text-gray-700 bg-gray-50">
-        <BsArrowUpCircle
-          className="text-[16px] cursor-pointer"
-          onClick={onUpVote}
-        />
-        {post.numberOfVotes}
-        <BsArrowDownCircle
-          className="text-[16px] cursor-pointer"
-          onClick={onDownVote}
-        />
+        {voteStatus === 1 ? (
+          <TiArrowUpThick
+            className="text-brand-100 cursor-pointer text-[25px]"
+            onClick={onUpVote}
+          />
+        ) : (
+          <TiArrowUpOutline
+            className="text-[23px] cursor-pointer hover:text-brand-100"
+            onClick={onUpVote}
+          />
+        )}
+        <p
+          className={`${voteStatus === 1 && 'text-brand-100'}
+        ${voteStatus === -1 && 'text-blue-500'}
+        `}
+        >
+          {post.numberOfVotes}
+        </p>
+        {voteStatus === -1 ? (
+          <TiArrowDownThick
+            className="text-blue-500 cursor-pointer text-[25px]"
+            onClick={onUpVote}
+          />
+        ) : (
+          <TiArrowDownOutline
+            className="text-[23px] cursor-pointer "
+            onClick={onDownVote}
+          />
+        )}
       </div>
       <div className="flex-1 p-2 bg-white">
         <div className="text-sm">
