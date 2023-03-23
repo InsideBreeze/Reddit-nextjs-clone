@@ -26,7 +26,7 @@ const SubmitPage = ({
   return (
     <PageContent>
       <>
-        <div className="py-">
+        <div className="py-4">
           <p className="text-lg font-medium py-[14px] border-b border-white">
             Create a post
           </p>

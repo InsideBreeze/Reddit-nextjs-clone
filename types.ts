@@ -23,3 +23,11 @@ export interface Post {
   numberOfVotes: number
   creatorName: string
 }
+
+export interface Comment {
+  id: string
+  text: string
+  createdAt: Timestamp
+  creatorId: string
+  creatorAvator: string
+}

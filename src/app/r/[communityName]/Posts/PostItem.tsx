@@ -10,7 +10,7 @@ import {
   increment,
   writeBatch,
 } from 'firebase/firestore'
-import { useAtom } from 'jotai'
+import { useAtom, useAtomValue } from 'jotai'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
 import { useAuthState } from 'react-firebase-hooks/auth'
@@ -24,19 +24,44 @@ import {
   TiArrowUpThick,
 } from 'react-icons/ti'
 import { Post } from '../../../../../types'
+import { useRouter } from 'next/navigation'
+import { communityStateAtom } from '@/atoms/communityDataState'
 
 dayjs.extend(relativeTime)
 
 interface Props {
   post: Post
+  communityName: string
+  isPostPage?: boolean
 }
-const PostItem = ({ post }: Props) => {
+const PostItem = ({ post, isPostPage, communityName }: Props) => {
   const [postDataState, setPostDataState] = useAtom(postDataAtom)
   const [user] = useAuthState(auth)
   const [voteStatus, setvoteStatus] = useState(0)
-  const onDelete = async () => {
+
+  const router = useRouter()
+
+  const communityState = useAtomValue(communityStateAtom)
+
+  const onSelectPost = () => {
+    if (!isPostPage) {
+      router.push(
+        `/r/${communityState.currentCommunity?.communityName}/comments/${post.id}`
+      )
+    }
+    setPostDataState(prev => ({
+      ...prev,
+      selectedPost: post,
+    }))
+  }
+  const onDelete = async (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    e.stopPropagation()
     // this is relative easy
     await deleteDoc(doc(db, `posts/${post.id}`))
+
+    if (isPostPage) {
+      router.push(`/r/${communityName}`)
+    }
 
     // update posts state(cache).
     setPostDataState(prev => ({
@@ -48,7 +73,9 @@ const PostItem = ({ post }: Props) => {
   // I think maybe it's not that hard, maybe I am wrong.
   // the logic is pretty clear...
   // so in the db, votedPost can only be 1 or -1 value
-  const onUpVote = async () => {
+  const onUpVote = async (e: React.MouseEvent<SVGElement, MouseEvent>) => {
+    console.log('update post id', post)
+    e.stopPropagation()
     /* if vote status:
        0: create doc with vote status 1, then the votes number of post +1
        1: delete doc, then # votes number -1
@@ -116,7 +143,8 @@ const PostItem = ({ post }: Props) => {
   }
 
   // the logic is the same as the upvote function
-  const onDownVote = async () => {
+  const onDownVote = async (e: React.MouseEvent<SVGElement, MouseEvent>) => {
+    e.stopPropagation()
     /* if vote status:
        - 0: create doc with vote status -1, then the votes number of post -1
        - 1: update doc with vote status -1, then # votes number - 2
@@ -175,6 +203,7 @@ const PostItem = ({ post }: Props) => {
               : item
           ),
         }))
+        console.log('hmmm?')
         setvoteStatus(0)
       }
     } catch (error) {
@@ -184,6 +213,7 @@ const PostItem = ({ post }: Props) => {
 
   // fetch current post vote status
   useEffect(() => {
+    console.log('not running?')
     getDoc(doc(db, `users/${user?.uid}/votedPosts/${post.id}`)).then(docRef => {
       if (docRef.exists()) {
         setvoteStatus(docRef.data().voteStatus)
@@ -192,10 +222,17 @@ const PostItem = ({ post }: Props) => {
     })
   }, [post.id, user?.uid])
 
-  console.log('post vote status', voteStatus)
+  console.log('voteState', voteStatus)
   return (
-    <div className="flex mt-4 border hover:border-blue-300">
-      <div className="flex flex-col items-center px-3 pt-2 text-gray-700 bg-gray-50">
+    <div
+      className={`flex ${!isPostPage && 'cursor-pointer mt-4'} rounded-xl`}
+      onClick={onSelectPost}
+    >
+      <div
+        className={`flex flex-col items-center px-3 pt-2 text-gray-700 bg-gray-50 ${
+          isPostPage && 'rounded-tl-md bg-white'
+        }`}
+      >
         {voteStatus === 1 ? (
           <TiArrowUpThick
             className="text-brand-100 cursor-pointer text-[25px]"
@@ -217,7 +254,7 @@ const PostItem = ({ post }: Props) => {
         {voteStatus === -1 ? (
           <TiArrowDownThick
             className="text-blue-500 cursor-pointer text-[25px]"
-            onClick={onUpVote}
+            onClick={onDownVote}
           />
         ) : (
           <TiArrowDownOutline
@@ -226,7 +263,7 @@ const PostItem = ({ post }: Props) => {
           />
         )}
       </div>
-      <div className="flex-1 p-2 bg-white">
+      <div className={`flex-1 p-2 bg-white ${isPostPage && 'rounded-tr-md'}`}>
         <div className="text-sm">
           Posted by u/{post.creatorName}{' '}
           {dayjs(post.createdAt.toDate()).fromNow()}
@@ -240,6 +277,7 @@ const PostItem = ({ post }: Props) => {
             width={460}
             className="max-w-[460px] max-h-[460px] p-4"
             alt=""
+            priority
           />
         )}
 

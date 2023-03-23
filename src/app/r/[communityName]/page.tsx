@@ -16,7 +16,6 @@ const CommunityPage = ({ params }: { params: { communityName: string } }) => {
     params.communityName
   )
 
-  const [user] = useAuthState(auth)
   if (!pageExists) notFound()
   if (!communityState.currentCommunity) return <p>loading</p>
 

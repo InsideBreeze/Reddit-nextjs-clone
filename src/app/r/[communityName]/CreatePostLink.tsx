@@ -22,7 +22,7 @@ const CreatePostLink = ({ communityName }: Props) => {
     }
   }
   return (
-    <div className="flex items-center p-2 space-x-3 text-gray-400 bg-white">
+    <div className="flex items-center p-2 mb-4 space-x-3 text-gray-400 bg-white">
       <BsReddit className="text-[34px]" />
       <input
         className="w-full pl-2 border rounded-md outline-none bg-gray-50 h-9 hover:border-blue-500"

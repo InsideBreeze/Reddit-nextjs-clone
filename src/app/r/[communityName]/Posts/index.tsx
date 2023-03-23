@@ -85,7 +85,11 @@ const Posts = ({ community }: Props) => {
       ) : (
         <div className="">
           {postDataState.posts.map(post => (
-            <PostItem post={post} key={post.id} />
+            <PostItem
+              post={post}
+              key={post.id}
+              communityName={community.communityName}
+            />
           ))}
         </div>
       )}

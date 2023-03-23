@@ -16,7 +16,11 @@ const TabItem = ({ Icon, name, selected, selectTab }: TabItemProps) => {
         selected
           ? 'text-blue-500 border-b-[2px] border-b-blue-500'
           : 'text-gray-500 border-b-[1px]'
-      } hover:bg-gray-50`}
+      } hover:bg-gray-50
+      ${name === 'Post' && 'rounded-tl-md'}
+      ${name === 'Talk' && 'rounded-tr-md'}
+
+      `}
       onClick={selectTab}
     >
       <Icon className="text-[20px]" />
