@@ -69,7 +69,7 @@ const PostPage = ({
         {post && (
           <>
             <PostItem post={post} isPostPage communityName={communityName} />
-            <Comments user={user} post={post} />
+            <Comments user={user} post={post} communityName={communityName} />
           </>
         )}
       </>

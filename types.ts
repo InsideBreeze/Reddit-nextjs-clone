@@ -30,4 +30,5 @@ export interface Comment {
   createdAt: Timestamp
   creatorId: string
   creatorAvator: string
+  creatorName: string
 }
