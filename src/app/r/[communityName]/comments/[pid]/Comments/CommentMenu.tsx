@@ -5,11 +5,14 @@ import { BsThreeDots } from 'react-icons/bs'
 import { FiTrash } from 'react-icons/fi'
 import { HiOutlineBookmark } from 'react-icons/hi'
 
-export default function CommentMenu() {
+interface Props {
+  onDeleteComment: () => void
+}
+const CommentMenu = ({ onDeleteComment }: Props) => {
   return (
     <div className="flex items-center">
       <Menu as="div" className="relative inline-block text-center ">
-        <div className="flex items-center p-1 hover:bg-gray-200">
+        <div className="flex items-center p-1 rounded-md hover:bg-gray-200">
           <Menu.Button className="">
             <BsThreeDots className="text-[20px]" />
           </Menu.Button>
@@ -29,7 +32,7 @@ export default function CommentMenu() {
                 {({ active }) => (
                   <div
                     className={`flex items-center space-x-2 ${
-                      active && 'bg-gray-100 text-black'
+                      active && 'bg-gray-100 text-black cursor-pointer'
                     } px-2 py-2 w-full rounded-md text-gray-600`}
                   >
                     <HiOutlineBookmark className="text-[20px]" />
@@ -41,7 +44,7 @@ export default function CommentMenu() {
                 {({ active }) => (
                   <div
                     className={`flex items-center space-x-2 ${
-                      active && 'bg-gray-100 text-black'
+                      active && 'bg-gray-100 text-black cursor-pointer'
                     } px-2 py-2 w-full rounded-md text-gray-600`}
                   >
                     <AiOutlineEdit className="text-[20px]" />
@@ -53,7 +56,7 @@ export default function CommentMenu() {
                 {({ active }) => (
                   <div
                     className={`flex items-center space-x-2 ${
-                      active && 'bg-gray-100 text-black'
+                      active && 'bg-gray-100 text-black cursor-pointer'
                     } px-2 py-2 w-full rounded-md text-gray-600`}
                   >
                     <AiOutlineBell className="text-[20px]" />
@@ -65,8 +68,9 @@ export default function CommentMenu() {
                 {({ active }) => (
                   <div
                     className={`flex items-center space-x-2 ${
-                      active && 'bg-gray-100 text-black'
+                      active && 'bg-gray-100 text-black cursor-pointer'
                     } px-2 py-2 w-full rounded-md text-gray-600`}
+                    onClick={onDeleteComment}
                   >
                     <FiTrash className="text-[20px]" />
                     <p className="text-sm">Delete comment</p>
@@ -80,3 +84,5 @@ export default function CommentMenu() {
     </div>
   )
 }
+
+export default CommentMenu

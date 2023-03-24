@@ -33,18 +33,6 @@ const Comments = ({ user, post, communityName }: Props) => {
   const [loading, setLoading] = useState(false)
   const [comments, setComments] = useState<Comment[]>([])
 
-  /*
-    comment: {
-        id,
-        text,
-        createdAt,
-        creatorId,
-        layer,
-        creatorAvator
-        postId
-    }
-
-    */
   const onCreateComment = async () => {
     const docRef = doc(collection(db, 'comments'))
     const newComment = {
@@ -64,12 +52,25 @@ const Comments = ({ user, post, communityName }: Props) => {
         numberOfComments: increment(1),
       })
       await batch.commit()
-      setComments([...comments, newComment as Comment])
+      setComments([newComment as Comment, ...comments])
     } catch (error) {
       console.log('onCreateComment', error)
     }
     setLoading(false)
     setText('')
+  }
+  const onDeleteComment = async (id: string) => {
+    try {
+      const batch = writeBatch(db)
+      batch.delete(doc(db, `comments/${id}`))
+      batch.update(doc(db, `posts/${post.id}`), {
+        numberOfComments: increment(-1),
+      })
+      await batch.commit()
+      setComments(comments.filter(comment => comment.id !== id))
+    } catch (error) {
+      console.log('onDeleteComment', error)
+    }
   }
 
   const fetchComments = async () => {
@@ -96,32 +97,42 @@ const Comments = ({ user, post, communityName }: Props) => {
     fetchComments()
   }, [])
 
-  console.log('comments', comments)
   return (
     <div className="bg-white px-[50px]">
       {user && (
-        <div className="flex flex-col focus:border-black">
+        <div className="flex flex-col text-sm focus:border-black">
           <p>
-            Comment as <span className="text-blue-700">{user.displayName}</span>
+            Comment as{' '}
+            <span className="text-blue-700 hover:underline hover:cursor-pointer">
+              {user.displayName}
+            </span>
           </p>
           <textarea
             value={text}
             placeholder="what are your thoughts?"
-            className="px-4 py-2 border outline-none  h-[122px] rounded-t-md"
+            className="px-4 py-2 border outline-none  max-h-[122px] rounded-t-md min-h-[122px]"
             onChange={e => setText(e.target.value)}
           />
           <div className="flex justify-end p-1 bg-gray-100">
-            <button
-              className="px-4 py-1 text-sm bg-blue-500 rounded-full disabled:opacity-60 disabled:text-white disabled:bg-gray-700"
-              disabled={text.trim().length === 0}
-              onClick={onCreateComment}
-            >
-              {loading ? <Spinner /> : <p>Comment</p>}
-            </button>
+            {loading ? (
+              <Spinner />
+            ) : (
+              <button
+                className="flex items-center justify-center px-4 py-1 text-sm bg-blue-500 rounded-full disabled:opacity-60 disabled:text-white disabled:bg-gray-700"
+                disabled={text.trim().length === 0}
+                onClick={onCreateComment}
+              >
+                <p>Comment</p>
+              </button>
+            )}
           </div>
         </div>
       )}
-      <CommentList comments={comments} />
+      <CommentList
+        comments={comments}
+        onDeleteComment={onDeleteComment}
+        user={user}
+      />
     </div>
   )
 }
