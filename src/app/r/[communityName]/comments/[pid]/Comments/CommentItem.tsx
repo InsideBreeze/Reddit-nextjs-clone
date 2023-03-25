@@ -24,6 +24,8 @@ import {
 } from 'firebase/firestore'
 import CommentList from './CommentList'
 import Spinner from '@/utils/Spinner'
+import { useSetAtom } from 'jotai'
+import { authModalAtom } from '@/atoms/authModalState'
 
 dayjs.extend(relativeTime)
 interface Props {
@@ -37,8 +39,13 @@ const CommentItem = ({ comment, onDeleteComment, user }: Props) => {
   const [text, setText] = useState('')
   const [replies, setReplies] = useState<Comment[]>([])
   const [loading, setLoading] = useState(false)
+  const setAuthModalState = useSetAtom(authModalAtom)
 
   const onSendReply = async () => {
+    if (!user) {
+      setAuthModalState({ view: 'login', open: true })
+      return
+    }
     try {
       const replyDocRef = doc(collection(db, `comments`))
       const newReply = {
