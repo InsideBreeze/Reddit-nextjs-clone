@@ -30,7 +30,7 @@ export default function Home() {
   const [loading, setLoading] = useState(false)
   const [postData, setPostData] = useAtom(postDataAtom)
 
-  const communityState = useAtomValue(communityStateAtom)
+  const [communityState, setCommunityState] = useAtom(communityStateAtom)
 
   console.log(
     'current community home page',
@@ -89,6 +89,14 @@ export default function Home() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, userLoading, communityState.joinedCommunities])
+
+  // reset community state?
+  useEffect(() => {
+    setCommunityState(prev => ({
+      ...prev,
+      currentCommunity: null,
+    }))
+  }, [setCommunityState])
 
   return (
     <PageContent>

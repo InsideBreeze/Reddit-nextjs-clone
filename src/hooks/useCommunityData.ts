@@ -17,6 +17,7 @@ import { Community } from '../../types'
 const useCommunityData = (communityName?: string) => {
   const [communityState, setCommunityState] = useAtom(communityStateAtom)
   const [loading, setLoading] = useState(false)
+  const [currentCommunityLoading, setCurrentCommunityLoading] = useState(false)
   const [pageExists, setpageExists] = useState(true)
 
   const [user] = useAuthState(auth)
@@ -111,10 +112,14 @@ const useCommunityData = (communityName?: string) => {
   }, [user])
 
   const fetchCurrentCommunity = async () => {
-    setLoading(true)
+    setCurrentCommunityLoading(true)
     try {
       const communityDoc = await getDoc(
-        doc(db, 'communities', communityName as string)
+        doc(
+          db,
+          'communities',
+          communityState.currentCommunity?.communityName as string
+        )
       )
       if (!communityDoc.exists()) {
         setpageExists(false)
@@ -137,21 +142,25 @@ const useCommunityData = (communityName?: string) => {
     } catch (error) {
       console.log('fetchCurrentCommunity error', error)
     }
+    setCurrentCommunityLoading(false)
   }
 
   // when run this hook, it will fetch current Name, if communityName is given
   useEffect(() => {
-    if (communityName) {
+    if (communityState.currentCommunity?.communityName) {
+      console.log('fetch....', communityState?.currentCommunity.communityName)
       fetchCurrentCommunity()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [communityName, communityState.currentCommunity?.communityName])
+  }, [communityState.currentCommunity?.communityName])
 
   return {
     communityState,
+    setCommunityState,
     loading,
     joinOrLeaveCommunity,
     pageExists,
+    currentCommunityLoading,
   }
 }
 

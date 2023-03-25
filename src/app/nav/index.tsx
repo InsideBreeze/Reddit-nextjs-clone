@@ -19,19 +19,17 @@ const Navbar = () => {
   const backToHome = () => {
     // reset the state
     //
-    setCommunityState(prev => ({
-      ...prev,
-      currentCommunity: null
-    }))
+    // setCommunityState(prev => ({
+    //   ...prev,
+    //   currentCommunity: null
+    // }))
     router.push('/')
   }
   return (
     <div className="bg-white h-[49px] px-3 md:px-[20px] flex items-center justify-between">
       {/* logo */}
       {/* you can set w and h by css from next13 */}
-      <div className="flex items-center cursor-pointer"
-        onClick={backToHome}
-      >
+      <div className="flex items-center cursor-pointer" onClick={backToHome}>
         <div className="py-2 pr-2">
           <Image
             src="/images/redditFace.svg"

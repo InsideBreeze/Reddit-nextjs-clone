@@ -6,32 +6,51 @@ import CreatePostLink from './CreatePostLink'
 import Header from './Header'
 import PageContent from './PageContent'
 import Posts from './Posts'
+import { useEffect } from 'react'
 
 const CommunityPage = ({ params }: { params: { communityName: string } }) => {
-  const { communityState, loading, pageExists } = useCommunityData(
-    params.communityName
+  const {
+    communityState,
+    currentCommunityLoading,
+    pageExists,
+    setCommunityState,
+  } = useCommunityData()
+
+  useEffect(() => {
+    setCommunityState(prev => ({
+      ...prev,
+      currentCommunity: {
+        ...prev.currentCommunity,
+        communityName: params.communityName,
+      },
+    }))
+  }, [])
+
+  console.log(
+    JSON.stringify(communityState.currentCommunity),
+    'current community'
   )
-
   if (!pageExists) notFound()
-  if (!communityState.currentCommunity) return <p>loading</p>
-
+  if (currentCommunityLoading) return <p>loading</p>
   return (
     <>
       {communityState.currentCommunity && (
-        <Header community={communityState.currentCommunity} />
+        <>
+          <Header community={communityState.currentCommunity} />
+          <PageContent>
+            <>
+              {/* Create Post Link*/}
+              <CreatePostLink communityName={params.communityName} />
+              {/* Posts */}
+              <Posts community={communityState.currentCommunity} />
+            </>
+            <>
+              {/* About */}
+              <About community={communityState.currentCommunity} />
+            </>
+          </PageContent>
+        </>
       )}
-      <PageContent>
-        <>
-          {/* Create Post Link*/}
-          <CreatePostLink communityName={params.communityName} />
-          {/* Posts */}
-          <Posts community={communityState.currentCommunity} />
-        </>
-        <>
-          {/* About */}
-          <About community={communityState.currentCommunity} />
-        </>
-      </PageContent>
     </>
   )
 }

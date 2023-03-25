@@ -14,10 +14,22 @@ const Directory = () => {
 
   const {
     communityState: { currentCommunity, joinedCommunities },
+    setCommunityState,
   } = useCommunityData()
 
   const router = useRouter()
   console.log('current directory', currentCommunity?.communityName)
+
+  const redirectCommunity = (communityName: string) => {
+    router.push(`/r/${communityName}`)
+    setCommunityState(prev => ({
+      ...prev,
+      currentCommunity: {
+        ...prev.currentCommunity,
+        communityName,
+      },
+    }))
+  }
 
   return (
     <>
@@ -83,7 +95,7 @@ const Directory = () => {
                                   active && 'bg-gray-200 bg-opacity-90'
                                 } flex items-center space-x-2 w-full rounded-sm p-1`}
                                 onClick={() =>
-                                  router.push(`/r/${community.communityName}`)
+                                  redirectCommunity(community.communityName)
                                 }
                               >
                                 {community.communityImage ? (
