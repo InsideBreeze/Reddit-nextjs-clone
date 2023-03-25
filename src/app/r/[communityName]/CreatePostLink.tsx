@@ -9,15 +9,14 @@ interface Props {
   communityName?: string
 }
 const CreatePostLink = ({ communityName }: Props) => {
-  //const [user] = useAuthState(auth)
   const user = useAtomValue(userLocalAtom)
   const router = useRouter()
   const setAuthModalState = useSetAtom(authModalAtom)
 
   const handleClick = () => {
-    if (user) {
+    if (user && communityName) {
       router.push(`/r/${communityName}/submit`)
-    } else {
+    } else if (!user) {
       setAuthModalState({ view: 'login', open: true })
     }
   }

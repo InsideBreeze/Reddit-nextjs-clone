@@ -79,7 +79,7 @@ const CommentItem = ({ comment, onDeleteComment, user }: Props) => {
       onSnapshot(repliesQuery, snapshot => {
         setReplies(snapshot.docs.map(doc => doc.data() as Comment))
       }),
-    [comment.id]
+    [repliesQuery]
   )
 
   return (

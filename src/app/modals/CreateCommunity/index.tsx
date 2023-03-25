@@ -75,6 +75,8 @@ const CreateCommunity = ({ isOpen, closeModal }: Props) => {
     } catch (error: any) {
       setError(error.message)
     }
+
+    setCommunityName('')
     setLoading(false)
   }
   return (
