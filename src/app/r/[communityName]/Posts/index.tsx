@@ -7,7 +7,7 @@ import { useAtomValue } from 'jotai'
 import { useEffect, useState } from 'react'
 import { Post } from '../../../../../types'
 import PostItem from './PostItem'
-import PostsLoader from './PostsLoader'
+import PostsLoader from '../../../../utils/PostsLoader'
 
 const Posts = () => {
   const { postDataState, setPostDataState } = usePosts()

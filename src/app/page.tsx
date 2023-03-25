@@ -17,7 +17,7 @@ import { Post } from '../../types'
 import CreatePostLink from './r/[communityName]/CreatePostLink'
 import PageContent from './r/[communityName]/PageContent'
 import PostItem from './r/[communityName]/Posts/PostItem'
-import PostsLoader from './r/[communityName]/Posts/PostsLoader'
+import PostsLoader from '../utils/PostsLoader'
 import Sidebar from './sidebar'
 
 export default function Home() {

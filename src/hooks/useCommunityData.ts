@@ -126,8 +126,6 @@ const useCommunityData = (communityName?: string) => {
         return
       }
       const communityData = communityDoc.data()
-      console.log('set current community')
-      console.log('image', communityData.communityImage)
       setCommunityState(prev => ({
         ...prev,
         currentCommunity: JSON.parse(
