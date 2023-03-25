@@ -20,7 +20,7 @@ const Header = ({ community }: Props) => {
     <div className="h-[146px]">
       <p className="bg-blue-500 h-[50%]" />
       <div className="h-[50%] bg-white">
-        <div className="border border-[red] w-[95%] max-w-[860px] mx-auto">
+        <div className="w-[95%] max-w-[860px] mx-auto">
           <div className="flex">
             {communityState.currentCommunity?.communityImage ? (
               <Image

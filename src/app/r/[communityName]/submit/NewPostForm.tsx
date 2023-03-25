@@ -2,11 +2,13 @@ import { db, storage } from '@/firebase'
 import useSelectFile from '@/hooks/useSelectFile'
 import { User } from 'firebase/auth'
 import {
+  doc,
   Timestamp,
   addDoc,
   collection,
   serverTimestamp,
   updateDoc,
+  setDoc,
 } from 'firebase/firestore'
 import { getDownloadURL, ref, uploadString } from 'firebase/storage'
 import { useRouter } from 'next/navigation'
@@ -77,8 +79,9 @@ const NewPostForm = ({ communityName, user }: Props) => {
   const createPost = async () => {
     setLoading(true)
     try {
+      const postRef = doc(collection(db, 'posts'))
       const newPost = {
-        //    id: docRef.id,
+        id: postRef.id,
         title: fieldValues.title,
         body: fieldValues.body,
         creatorId: user.uid,
@@ -89,14 +92,14 @@ const NewPostForm = ({ communityName, user }: Props) => {
         creatorName: user.displayName!,
       }
 
-      const postDoc = await addDoc(collection(db, 'posts'), newPost)
+      const postDoc = await setDoc(postRef, newPost)
       if (selectedFile) {
-        const imageRef = ref(storage, `/posts/${postDoc.id}/image`)
+        const imageRef = ref(storage, `/posts/${postRef.id}/image`)
         await uploadString(imageRef, selectedFile, 'data_url')
         const downloadURL = await getDownloadURL(imageRef)
 
         // then update the doc
-        await updateDoc(postDoc, {
+        await updateDoc(postRef, {
           postImage: downloadURL,
         })
       }

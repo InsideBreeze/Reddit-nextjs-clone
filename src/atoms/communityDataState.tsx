@@ -10,6 +10,7 @@ interface communityState {
 export interface CommunityData {
   communityName: string
   isModerator?: boolean
+  communityImage?: string
 }
 export const communityStateAtom = atom<communityState>({
   joinedCommunities: [],

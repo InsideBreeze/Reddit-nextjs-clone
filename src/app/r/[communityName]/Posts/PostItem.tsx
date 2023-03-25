@@ -31,10 +31,11 @@ dayjs.extend(relativeTime)
 
 interface Props {
   post: Post
-  communityName: string
+  communityName?: string
   isPostPage?: boolean
+  homePage?: boolean
 }
-const PostItem = ({ post, isPostPage, communityName }: Props) => {
+const PostItem = ({ post, isPostPage, communityName, homePage }: Props) => {
   const [postDataState, setPostDataState] = useAtom(postDataAtom)
   const [user] = useAuthState(auth)
   const [voteStatus, setvoteStatus] = useState(0)
@@ -45,9 +46,10 @@ const PostItem = ({ post, isPostPage, communityName }: Props) => {
 
   const onSelectPost = () => {
     if (!isPostPage) {
-      router.push(
-        `/r/${communityState.currentCommunity?.communityName}/comments/${post.id}`
-      )
+      // router.push(
+      //   `/r/${communityState.currentCommunity?.communityName}/comments/${post.id}`
+      // )
+      router.push(`/r/${post.communityName}/comments/${post.id}`)
     }
     setPostDataState(prev => ({
       ...prev,
@@ -229,9 +231,8 @@ const PostItem = ({ post, isPostPage, communityName }: Props) => {
       onClick={onSelectPost}
     >
       <div
-        className={`flex flex-col items-center px-3 pt-2 text-gray-700 bg-gray-50 ${
-          isPostPage && 'rounded-tl-md bg-white'
-        }`}
+        className={`flex flex-col items-center px-3 pt-2 text-gray-700 bg-gray-50 ${isPostPage && 'rounded-tl-md bg-white'
+          }`}
       >
         {voteStatus === 1 ? (
           <TiArrowUpThick

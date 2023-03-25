@@ -22,6 +22,8 @@ import { useAuthState } from 'react-firebase-hooks/auth'
 import { Comment, Post } from '../../../../../../../types'
 import Spinner from '@/utils/Spinner'
 import CommentList from './CommentList'
+import { TiMessages } from 'react-icons/ti'
+import { SiGooglemessages } from 'react-icons/si'
 
 interface Props {
   user?: User | null
@@ -73,6 +75,7 @@ const Comments = ({ user, post, communityName }: Props) => {
     }
   }
 
+  // TODO：comments skeleton, image skeleton
   const fetchComments = async () => {
     try {
       const commentsQuery = query(
@@ -118,7 +121,7 @@ const Comments = ({ user, post, communityName }: Props) => {
               <Spinner />
             ) : (
               <button
-                className="flex items-center justify-center px-4 py-1 text-sm bg-blue-500 rounded-full disabled:opacity-60 disabled:text-white disabled:bg-gray-700"
+                className="flex items-center justify-center px-4 py-1 text-sm text-white bg-blue-500 rounded-full disabled:opacity-60 disabled:bg-gray-700"
                 disabled={text.trim().length === 0}
                 onClick={onCreateComment}
               >
@@ -128,11 +131,21 @@ const Comments = ({ user, post, communityName }: Props) => {
           </div>
         </div>
       )}
-      <CommentList
-        comments={comments}
-        onDeleteComment={onDeleteComment}
-        user={user}
-      />
+      {comments.length > 0 ? (
+        <CommentList
+          comments={comments}
+          onDeleteComment={onDeleteComment}
+          user={user}
+        />
+      ) : (
+        <div className="h-[340px] w-full flex items-center justify-center">
+          <div className="flex flex-col items-center space-y-3 text-gray-600">
+            <SiGooglemessages className="text-[30px]" />
+            <p className="font-medium">No Comments Yet</p>
+            <p className="text-sm">Be the first to share what you think!</p>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

@@ -2,6 +2,7 @@ import { auth, db } from '@/firebase'
 import Spinner from '@/utils/Spinner'
 import { Dialog, Transition } from '@headlessui/react'
 import { doc, runTransaction, serverTimestamp } from 'firebase/firestore'
+import { useRouter } from 'next/navigation'
 import React, { Fragment, useState } from 'react'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { AiFillEye } from 'react-icons/ai'
@@ -21,6 +22,7 @@ const CreateCommunity = ({ isOpen, closeModal }: Props) => {
   const [loading, setLoading] = useState(false)
 
   const [user] = useAuthState(auth)
+  const router = useRouter()
 
   const remainingCount = 21 - communityName.length
 
@@ -65,6 +67,8 @@ const CreateCommunity = ({ isOpen, closeModal }: Props) => {
           }
         )
       })
+      router.push(`/r/${communityName}`)
+      closeModal()
     } catch (error: any) {
       setError(error.message)
     }

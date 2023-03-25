@@ -96,7 +96,7 @@ const CommentItem = ({ comment, onDeleteComment, user }: Props) => {
             </p>
             <BsDot className="text-[12px] text-gray-400" />
             <p className="text-xs text-gray-500">
-              {dayjs(comment.createdAt.toDate()).fromNow()}
+              {dayjs(comment?.createdAt.toDate()).fromNow()}
             </p>
           </div>
           <p className="my-2">{comment.text}</p>

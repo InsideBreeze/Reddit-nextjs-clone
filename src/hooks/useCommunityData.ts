@@ -12,7 +12,6 @@ import { useAtom } from 'jotai'
 import { useEffect, useState } from 'react'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { Community } from '../../types'
-import { notFound } from 'next/navigation'
 
 interface Props {
   communityName?: string

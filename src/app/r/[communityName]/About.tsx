@@ -45,12 +45,28 @@ const About = ({ community }: Props) => {
       await updateDoc(doc(db, `communities/${community.communityName}`), {
         communityImage: downloadURL,
       })
+      await updateDoc(
+        doc(
+          db,
+          `users/${user?.uid}/joinedCommunities/${community.communityName}`
+        ),
+        {
+          communityImage: downloadURL,
+        }
+      )
       setCommunityState(prev => ({
-        ...prev,
         currentCommunity: {
           ...prev.currentCommunity!,
           communityImage: downloadURL,
         },
+        joinedCommunities: prev.joinedCommunities.map(c =>
+          c.communityName === community.communityName
+            ? {
+                ...c,
+                communityImage: downloadURL,
+              }
+            : c
+        ),
       }))
       setSelectedFile('')
     } catch (error) {
