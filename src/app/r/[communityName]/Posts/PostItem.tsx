@@ -282,8 +282,7 @@ const PostItem = ({ post, isPostPage, homePage }: Props) => {
             </>
           )}
           <p className="mr-1">Posted by u/{post.creatorName} </p>
-
-          {dayjs(post.createdAt.toDate()).fromNow()}
+          <p>{dayjs(post.createdAt.toDate()).fromNow()}</p>
         </div>
         <div className="font-semibold">{post.title}</div>
         <div className="text-sm">{post.body}</div>
