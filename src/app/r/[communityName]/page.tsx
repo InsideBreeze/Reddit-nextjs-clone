@@ -24,14 +24,14 @@ const CommunityPage = ({ params }: { params: { communityName: string } }) => {
         communityName: params.communityName,
       },
     }))
-  }, [])
+  }, [params.communityName])
 
   console.log(
     JSON.stringify(communityState.currentCommunity),
     'current community'
   )
   if (!pageExists) notFound()
-  if (currentCommunityLoading) return <p>loading</p>
+  if (!communityState.currentCommunity?.creatorId) return <p>loading</p>
   return (
     <>
       {communityState.currentCommunity && (
@@ -46,7 +46,7 @@ const CommunityPage = ({ params }: { params: { communityName: string } }) => {
             </>
             <>
               {/* About */}
-              <About community={communityState.currentCommunity} />
+              {/* <About community={communityState.currentCommunity} /> */}
             </>
           </PageContent>
         </>

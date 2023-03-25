@@ -1,7 +1,16 @@
+'use client'
+import { authModalAtom } from '@/atoms/authModalState'
+import { createCommunityAtom } from '@/atoms/createCommunityModalState'
+import { auth } from '@/firebase'
+import { useSetAtom } from 'jotai'
 import Image from 'next/image'
 import React from 'react'
+import { useAuthState } from 'react-firebase-hooks/auth'
 
 const PersonalHome = () => {
+  const setCommunityModal = useSetAtom(createCommunityAtom)
+  const setAuthModalState = useSetAtom(authModalAtom)
+  const [user] = useAuthState(auth)
   return (
     <div className="">
       <div className="bg-[url('/images/home-banner.png')] w-full h-[34px]">
@@ -33,7 +42,14 @@ const PersonalHome = () => {
           </button>
           <button
             className="py-1 font-medium text-blue-500 bg-white border border-blue-500 rounded-full"
-            onClick={() => {}}
+            onClick={() => {
+              if (user) {
+                setCommunityModal(true)
+              } else {
+                setAuthModalState({ view: 'login', open: true })
+                setCommunityModal(true)
+              }
+            }}
           >
             Create Community
           </button>

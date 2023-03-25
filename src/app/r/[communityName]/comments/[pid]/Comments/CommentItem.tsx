@@ -21,6 +21,7 @@ import {
   updateDoc,
 } from 'firebase/firestore'
 import CommentList from './CommentList'
+import Spinner from '@/utils/Spinner'
 
 dayjs.extend(relativeTime)
 interface Props {
@@ -33,6 +34,7 @@ const CommentItem = ({ comment, onDeleteComment, user }: Props) => {
 
   const [text, setText] = useState('')
   const [replies, setReplies] = useState<Comment[]>([])
+  const [loading, setLoading] = useState(false)
 
   const onSendReply = async () => {
     try {
@@ -47,6 +49,7 @@ const CommentItem = ({ comment, onDeleteComment, user }: Props) => {
         postId: comment.postId,
         parentId: comment.id,
       }
+      setLoading(true)
 
       // add a new reply to comments collection first
       await setDoc(doc(db, `comments/${replyDocRef.id}`), newReply)
@@ -61,6 +64,7 @@ const CommentItem = ({ comment, onDeleteComment, user }: Props) => {
     } catch (error) {
       console.log('onSendReply error', error)
     }
+    setLoading(false)
   }
 
   const fetchReplies = async () => {
@@ -85,7 +89,6 @@ const CommentItem = ({ comment, onDeleteComment, user }: Props) => {
     [comment.id]
   )
 
-  console.log(replies)
   return (
     <div className="relative">
       <span className="w-[2px] absolute bg-gray-300 h-[70%] left-3 top-9 overflow-hidden hover:bg-blue-500 hover:cursor-pointer" />
@@ -131,7 +134,6 @@ const CommentItem = ({ comment, onDeleteComment, user }: Props) => {
             </div>
             <div className="text-sm font-medium navButton">Share</div>
             <CommentMenu onDeleteComment={() => onDeleteComment(comment.id)} />
-            {/* <BsThreeDots className="text-[20px" /> */}
           </div>
           {openReply && (
             <div className="flex flex-col ml-5 bg-[red] my-2">
@@ -148,13 +150,17 @@ const CommentItem = ({ comment, onDeleteComment, user }: Props) => {
                 >
                   Cancel
                 </button>
-                <button
-                  className="px-5 py-1 text-sm text-white bg-blue-500 rounded-full hover:bg-blue-600 disabled:opacity-60 disabled:text-white disabled:bg-gray-700"
-                  disabled={text.trim().length === 0}
-                  onClick={onSendReply}
-                >
-                  Reply
-                </button>
+                {loading ? (
+                  <Spinner />
+                ) : (
+                  <button
+                    className="px-5 py-1 text-sm text-white bg-blue-500 rounded-full hover:bg-blue-600 disabled:opacity-60 disabled:text-white disabled:bg-gray-700"
+                    disabled={text.trim().length === 0}
+                    onClick={onSendReply}
+                  >
+                    Reply
+                  </button>
+                )}
               </div>
             </div>
           )}

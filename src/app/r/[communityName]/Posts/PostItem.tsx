@@ -31,11 +31,10 @@ dayjs.extend(relativeTime)
 
 interface Props {
   post: Post
-  communityName?: string
   isPostPage?: boolean
   homePage?: boolean
 }
-const PostItem = ({ post, isPostPage, communityName, homePage }: Props) => {
+const PostItem = ({ post, isPostPage, homePage }: Props) => {
   const [postDataState, setPostDataState] = useAtom(postDataAtom)
   const [user] = useAuthState(auth)
   const [voteStatus, setvoteStatus] = useState(0)
@@ -62,7 +61,7 @@ const PostItem = ({ post, isPostPage, communityName, homePage }: Props) => {
     await deleteDoc(doc(db, `posts/${post.id}`))
 
     if (isPostPage) {
-      router.push(`/r/${communityName}`)
+      router.push(`/r/${post.communityName}`)
     }
 
     // update posts state(cache).

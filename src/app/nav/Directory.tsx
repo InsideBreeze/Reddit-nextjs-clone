@@ -8,9 +8,11 @@ import { AiFillHome, AiOutlinePlus } from 'react-icons/ai'
 import { BiChevronDown } from 'react-icons/bi'
 import { BsReddit } from 'react-icons/bs'
 import CreateCommunity from '../modals/CreateCommunity'
+import { useAtom } from 'jotai'
+import { createCommunityAtom } from '@/atoms/createCommunityModalState'
 
 const Directory = () => {
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useAtom(createCommunityAtom)
 
   const {
     communityState: { currentCommunity, joinedCommunities },

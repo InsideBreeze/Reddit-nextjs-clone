@@ -1,30 +1,23 @@
 'use client'
-import { auth, db } from '@/firebase'
+import { db } from '@/firebase'
+import Spinner from '@/utils/Spinner'
 import { User } from 'firebase/auth'
 import {
   Timestamp,
-  WriteBatch,
-  addDoc,
   collection,
   doc,
-  getDoc,
-  getDocs,
   increment,
   onSnapshot,
   orderBy,
   query,
   serverTimestamp,
-  setDoc,
   where,
   writeBatch,
 } from 'firebase/firestore'
-import React, { useEffect, useState } from 'react'
-import { useAuthState } from 'react-firebase-hooks/auth'
-import { Comment, Post } from '../../../../../../../types'
-import Spinner from '@/utils/Spinner'
-import CommentList from './CommentList'
-import { TiMessages } from 'react-icons/ti'
+import { useEffect, useState } from 'react'
 import { SiGooglemessages } from 'react-icons/si'
+import { Comment, Post } from '../../../../../../../types'
+import CommentList from './CommentList'
 
 interface Props {
   user?: User | null
@@ -82,17 +75,16 @@ const Comments = ({ user, post, communityName }: Props) => {
       where('parentId', '==', post.id),
       orderBy('createdAt', 'desc')
     )
-    const unsubscribe = () =>
-      onSnapshot(commentsQuery, snapshot => {
-        setComments(
-          snapshot.docs.map(
-            doc =>
-              ({
-                ...doc.data(),
-              } as Comment)
-          )
+    const unsubscribe = onSnapshot(commentsQuery, snapshot => {
+      setComments(
+        snapshot.docs.map(
+          doc =>
+            ({
+              ...doc.data(),
+            } as Comment)
         )
-      })
+      )
+    })
     return () => {
       unsubscribe()
     }

@@ -17,9 +17,9 @@ import { useAtomValue } from 'jotai'
 import { communityStateAtom } from '@/atoms/communityDataState'
 
 interface Props {
-  community: Community
+  communityName: string
 }
-const Posts = ({ community }: Props) => {
+const Posts = ({ communityName }: Props) => {
   const [posts, setPosts] = useState<Post[]>([])
 
   const { postDataState, setPostDataState } = usePosts()
@@ -28,7 +28,7 @@ const Posts = ({ community }: Props) => {
 
   const q = query(
     collection(db, 'posts'),
-    where('communityName', '==', community.communityName),
+    where('communityName', '==', currentCommunity?.communityName),
     orderBy('createdAt', 'desc')
   )
 
@@ -41,10 +41,10 @@ const Posts = ({ community }: Props) => {
         ...prev,
         posts: postDocs.docs.map(
           doc =>
-          ({
-            ...doc.data(),
-            id: doc.id,
-          } as Post)
+            ({
+              ...doc.data(),
+              id: doc.id,
+            } as Post)
         ),
       }))
     } catch (error) {
@@ -56,7 +56,7 @@ const Posts = ({ community }: Props) => {
   useEffect(() => {
     fetchPosts()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [community.communityName, currentCommunity?.communityName])
+  }, [currentCommunity?.communityName])
 
   // useEffect(
   //   () =>
@@ -74,7 +74,6 @@ const Posts = ({ community }: Props) => {
   //   [q]
   // )
 
-
   return (
     <>
       {loading ? (
@@ -82,11 +81,7 @@ const Posts = ({ community }: Props) => {
       ) : (
         <div className="">
           {postDataState.posts.map(post => (
-            <PostItem
-              post={post}
-              key={post.id}
-              communityName={community.communityName}
-            />
+            <PostItem post={post} key={post.id} />
           ))}
         </div>
       )}

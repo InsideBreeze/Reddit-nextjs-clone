@@ -51,7 +51,7 @@ const tabs: TabItem[] = [
 
 interface Props {
   communityName: string
-  user: User,
+  user: User
   communityImage?: string
 }
 const NewPostForm = ({ communityName, user, communityImage }: Props) => {
@@ -91,7 +91,7 @@ const NewPostForm = ({ communityName, user, communityImage }: Props) => {
         numberOfComments: 0,
         numberOfVotes: 0,
         creatorName: user.displayName!,
-        communityImage
+        communityImage: communityImage || '',
       }
 
       const postDoc = await setDoc(postRef, newPost)
