@@ -1,10 +1,11 @@
-import { auth, db } from '@/firebase'
+import { userLocalAtom } from '@/atoms/userLocalState'
+import { db } from '@/firebase'
 import Spinner from '@/utils/Spinner'
 import { Dialog, Transition } from '@headlessui/react'
 import { doc, runTransaction, serverTimestamp } from 'firebase/firestore'
+import { useAtomValue } from 'jotai'
 import { useRouter } from 'next/navigation'
 import React, { Fragment, useState } from 'react'
-import { useAuthState } from 'react-firebase-hooks/auth'
 import { AiFillEye } from 'react-icons/ai'
 import { BsFillPersonFill } from 'react-icons/bs'
 import { HiLockClosed } from 'react-icons/hi'
@@ -21,7 +22,8 @@ const CreateCommunity = ({ isOpen, closeModal }: Props) => {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
-  const [user] = useAuthState(auth)
+  //const [user] = useAuthState(auth)
+  const user = useAtomValue(userLocalAtom)
   const router = useRouter()
 
   const remainingCount = 21 - communityName.length

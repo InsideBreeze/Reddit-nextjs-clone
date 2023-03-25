@@ -1,4 +1,5 @@
 import { authModalAtom } from '@/atoms/authModalState'
+import { userLocalAtom } from '@/atoms/userLocalState'
 import { auth } from '@/firebase'
 import Spinner from '@/utils/Spinner'
 import { useSetAtom } from 'jotai'
@@ -11,6 +12,7 @@ const Login = () => {
     password: '',
   })
   const setAuthModalState = useSetAtom(authModalAtom)
+  const setUserLocalState = useSetAtom(userLocalAtom)
 
   // TODO: show error
   const [signInWithEmailAndPassword, user, loading, error] =
@@ -25,7 +27,13 @@ const Login = () => {
 
   const onLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    await signInWithEmailAndPassword(fieldValues.email, fieldValues.password)
+    const userCred = await signInWithEmailAndPassword(
+      fieldValues.email,
+      fieldValues.password
+    )
+    if (userCred) {
+      setUserLocalState(userCred.user)
+    }
   }
   return (
     <form className="w-full" onSubmit={onLogin}>

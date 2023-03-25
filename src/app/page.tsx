@@ -1,7 +1,8 @@
 'use client'
 import { communityStateAtom } from '@/atoms/communityDataState'
 import { postDataAtom } from '@/atoms/postDataState'
-import { auth, db } from '@/firebase'
+import { userLocalAtom } from '@/atoms/userLocalState'
+import { db } from '@/firebase'
 import {
   collection,
   getDocs,
@@ -10,14 +11,13 @@ import {
   query,
   where,
 } from 'firebase/firestore'
-import { useAtom } from 'jotai'
+import { useAtom, useAtomValue } from 'jotai'
 import { useEffect, useState } from 'react'
-import { useAuthState } from 'react-firebase-hooks/auth'
 import { Post } from '../../types'
+import PostsLoader from '../utils/PostsLoader'
 import CreatePostLink from './r/[communityName]/CreatePostLink'
 import PageContent from './r/[communityName]/PageContent'
 import PostItem from './r/[communityName]/Posts/PostItem'
-import PostsLoader from '../utils/PostsLoader'
 import Sidebar from './sidebar'
 
 export default function Home() {
@@ -26,12 +26,16 @@ export default function Home() {
   // premium
   //
   // fetch joinedCommunities
-  const [user, userLoading] = useAuthState(auth)
+  // const [user, userLoading] = useAuthState(auth)
   const [loading, setLoading] = useState(false)
   const [postData, setPostData] = useAtom(postDataAtom)
 
   const [communityState, setCommunityState] = useAtom(communityStateAtom)
+  const userValue = useAtomValue(userLocalAtom)
 
+  console.log('user value', userValue)
+
+  // console.log('user', user)
   const buildUserHomeFeed = async () => {
     setLoading(true)
     try {
@@ -76,13 +80,13 @@ export default function Home() {
   }
 
   useEffect(() => {
-    if (user && !userLoading && communityState.joinedCommunities.length > 0) {
+    if (userValue && communityState.joinedCommunities.length > 0) {
       buildUserHomeFeed()
     } else {
       buildNoUserHomeFeed()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, userLoading, communityState.joinedCommunities])
+  }, [userValue, communityState.joinedCommunities])
 
   // reset community state
   useEffect(() => {

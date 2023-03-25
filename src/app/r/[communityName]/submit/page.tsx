@@ -1,12 +1,12 @@
 'use client'
-import { auth } from '@/firebase'
+import { userLocalAtom } from '@/atoms/userLocalState'
 import useCommunityData from '@/hooks/useCommunityData'
-import { useAuthState } from 'react-firebase-hooks/auth'
+import { useAtomValue } from 'jotai'
+import { useEffect } from 'react'
+import { Community } from '../../../../../types'
 import About from '../About'
 import PageContent from '../PageContent'
 import NewPostForm from './NewPostForm'
-import { useEffect } from 'react'
-import { Community } from '../../../../../types'
 
 const SubmitPage = ({
   params,
@@ -15,7 +15,8 @@ const SubmitPage = ({
     communityName: string
   }
 }) => {
-  const [user] = useAuthState(auth)
+  //const [user] = useAuthState(auth)
+  const user = useAtomValue(userLocalAtom)
 
   const {
     communityState: { currentCommunity },

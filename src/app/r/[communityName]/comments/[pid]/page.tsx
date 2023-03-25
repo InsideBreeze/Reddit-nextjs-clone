@@ -1,11 +1,11 @@
 'use client'
 import { communityStateAtom } from '@/atoms/communityDataState'
-import { auth, db } from '@/firebase'
+import { userLocalAtom } from '@/atoms/userLocalState'
+import { db } from '@/firebase'
 import usePosts from '@/hooks/usePosts'
 import { doc, getDoc } from 'firebase/firestore'
-import { useAtom } from 'jotai'
+import { useAtom, useAtomValue } from 'jotai'
 import { useEffect, useState } from 'react'
-import { useAuthState } from 'react-firebase-hooks/auth'
 import { Community, Post } from '../../../../../../types'
 import About from '../../About'
 import PageContent from '../../PageContent'
@@ -24,7 +24,8 @@ const PostPage = ({
   const { communityName, pid: postId } = params
 
   const [post, setPost] = useState<Post>()
-  const [user] = useAuthState(auth)
+  //const [user] = useAuthState(auth)
+  const user = useAtomValue(userLocalAtom)
 
   //   let post =
   const [communityState, setCommunityState] = useAtom(communityStateAtom)

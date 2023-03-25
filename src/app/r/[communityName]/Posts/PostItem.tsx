@@ -1,7 +1,7 @@
 'use client'
-import { communityStateAtom } from '@/atoms/communityDataState'
 import { postDataAtom } from '@/atoms/postDataState'
-import { auth, db } from '@/firebase'
+import { userLocalAtom } from '@/atoms/userLocalState'
+import { db } from '@/firebase'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import {
@@ -15,7 +15,6 @@ import { useAtomValue, useSetAtom } from 'jotai'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { useAuthState } from 'react-firebase-hooks/auth'
 import { BsBookmark, BsChat, BsDot, BsReddit } from 'react-icons/bs'
 import { FiTrash } from 'react-icons/fi'
 import { RiShareForwardLine } from 'react-icons/ri'
@@ -36,7 +35,8 @@ interface Props {
 }
 const PostItem = ({ post, isPostPage, homePage }: Props) => {
   const setPostDataState = useSetAtom(postDataAtom)
-  const [user] = useAuthState(auth)
+  //const [user] = useAuthState(auth)
+  const user = useAtomValue(userLocalAtom)
   const [voteStatus, setvoteStatus] = useState(0)
 
   const router = useRouter()

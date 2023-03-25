@@ -1,5 +1,6 @@
 'use client'
 import { authModalAtom } from '@/atoms/authModalState'
+import { userLocalAtom } from '@/atoms/userLocalState'
 import { auth } from '@/firebase'
 import { Menu, Transition } from '@headlessui/react'
 import { User, signOut } from 'firebase/auth'
@@ -17,6 +18,12 @@ interface Props {
 
 const UserMenu = ({ user }: Props) => {
   const setAuthModalState = useSetAtom(authModalAtom)
+
+  const setUserLocalState = useSetAtom(userLocalAtom)
+  const logOut = async () => {
+    await signOut(auth)
+    setUserLocalState(null)
+  }
   return (
     <div className="flex items-center justify-center">
       <Menu as="div" className="relative inline-block text-left">
@@ -80,7 +87,7 @@ const UserMenu = ({ user }: Props) => {
                         className={`${
                           active && 'bg-blue-600 text-white'
                         } flex items-center space-x-2 w-full rounded-sm p-1`}
-                        onClick={() => signOut(auth)}
+                        onClick={logOut}
                       >
                         <CiLogout className="text-[25px]" />
                         <p>Logout</p>

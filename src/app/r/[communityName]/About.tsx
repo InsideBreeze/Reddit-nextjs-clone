@@ -12,9 +12,10 @@ import { useRef, useState } from 'react'
 import useSelectFile from '@/hooks/useSelectFile'
 import { getDownloadURL, ref, uploadString } from 'firebase/storage'
 import { doc, updateDoc } from 'firebase/firestore'
-import { useAtom, useSetAtom } from 'jotai'
+import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { communityStateAtom } from '@/atoms/communityDataState'
 import Spinner from '@/utils/Spinner'
+import { userLocalAtom } from '@/atoms/userLocalState'
 
 interface Props {
   community: Community
@@ -22,7 +23,8 @@ interface Props {
 
 const About = ({ community }: Props) => {
   const router = useRouter()
-  const [user] = useAuthState(auth)
+  //const [user] = useAuthState(auth)
+  const user = useAtomValue(userLocalAtom)
 
   const fileRef = useRef<HTMLInputElement>(null)
   const { selectedFile, setSelectedFile, onSelectFile } = useSelectFile()

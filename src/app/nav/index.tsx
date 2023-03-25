@@ -1,17 +1,14 @@
 'use client'
-import { communityStateAtom } from '@/atoms/communityDataState'
-import { auth } from '@/firebase'
-import { useSetAtom } from 'jotai'
+import { userLocalAtom } from '@/atoms/userLocalState'
+import { useAtomValue } from 'jotai'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import { useAuthState } from 'react-firebase-hooks/auth'
 import Directory from './Directory'
 import RightContent from './RightContent'
 import SearchInput from './SearchInput'
 
 const Navbar = () => {
-  const [user] = useAuthState(auth)
-
+  const userValue = useAtomValue(userLocalAtom)
   const router = useRouter()
 
   const backToHome = () => {
@@ -42,12 +39,12 @@ const Navbar = () => {
       </div>
 
       {/* directory */}
-      {user && <Directory />}
+      {userValue && <Directory />}
 
       {/* search input */}
       <SearchInput />
 
-      <RightContent user={user} />
+      <RightContent user={userValue} />
 
       {/* Icons */}
 

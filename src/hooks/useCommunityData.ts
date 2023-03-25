@@ -1,5 +1,6 @@
 import { CommunityData, communityStateAtom } from '@/atoms/communityDataState'
-import { auth, db } from '@/firebase'
+import { userLocalAtom } from '@/atoms/userLocalState'
+import { db } from '@/firebase'
 import {
   collection,
   doc,
@@ -8,9 +9,8 @@ import {
   increment,
   writeBatch,
 } from 'firebase/firestore'
-import { useAtom } from 'jotai'
+import { useAtom, useAtomValue } from 'jotai'
 import { useEffect, useState } from 'react'
-import { useAuthState } from 'react-firebase-hooks/auth'
 import { Community } from '../../types'
 
 // this hook is used to pull data to state and some other utility functions
@@ -20,7 +20,8 @@ const useCommunityData = (communityName?: string) => {
   const [currentCommunityLoading, setCurrentCommunityLoading] = useState(false)
   const [pageExists, setpageExists] = useState(true)
 
-  const [user] = useAuthState(auth)
+  // const [user] = useAuthState(auth)
+  const user = useAtomValue(userLocalAtom)
 
   // for joining or leaving community
   const joinOrLeaveCommunity = (

@@ -3,11 +3,11 @@ import useCommunityData from '@/hooks/useCommunityData'
 import { notFound } from 'next/navigation'
 import { useEffect } from 'react'
 import { Community } from '../../../../types'
+import About from './About'
 import CreatePostLink from './CreatePostLink'
 import Header from './Header'
 import PageContent from './PageContent'
 import Posts from './Posts'
-import About from './About'
 
 const CommunityPage = ({ params }: { params: { communityName: string } }) => {
   const {
@@ -27,10 +27,6 @@ const CommunityPage = ({ params }: { params: { communityName: string } }) => {
     }))
   }, [params.communityName, setCommunityState])
 
-  console.log(
-    JSON.stringify(communityState.currentCommunity),
-    'current community'
-  )
   if (!pageExists) notFound()
   if (!communityState.currentCommunity?.creatorId) return <p>loading</p>
   return (

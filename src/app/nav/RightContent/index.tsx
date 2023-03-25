@@ -1,12 +1,9 @@
 'use client'
-import React from 'react'
-import AuthButtons from './AuthButtons'
-import UserMenu from './UserMenu'
 import AuthModal from '@/app/modals/auth'
-import { useAuthState } from 'react-firebase-hooks/auth'
-import { auth } from '@/firebase'
-import Icons from './Icons'
 import { User } from 'firebase/auth'
+import AuthButtons from './AuthButtons'
+import Icons from './Icons'
+import UserMenu from './UserMenu'
 
 interface Props {
   user?: User | null

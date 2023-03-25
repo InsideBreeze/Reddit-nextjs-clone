@@ -1,10 +1,9 @@
 'use client'
 import { authModalAtom } from '@/atoms/authModalState'
-import { auth } from '@/firebase'
+import { userLocalAtom } from '@/atoms/userLocalState'
 import { Dialog, Transition } from '@headlessui/react'
-import { useAtom } from 'jotai'
+import { useAtom, useAtomValue } from 'jotai'
 import { Fragment, useEffect } from 'react'
-import { useAuthState } from 'react-firebase-hooks/auth'
 import { MdClose } from 'react-icons/md'
 import Login from './Login'
 import OAuthButtons from './OAuthButtons'
@@ -14,9 +13,10 @@ import SignUp from './SignUp'
 const AuthModal = () => {
   const [authModalState, setAuthModalState] = useAtom(authModalAtom)
 
-  const [user] = useAuthState(auth)
+  const user = useAtomValue(userLocalAtom)
 
   // sync user state
+  // does it should exist?
   useEffect(() => {
     if (user) {
       setAuthModalState(prev => ({ ...prev, open: false }))

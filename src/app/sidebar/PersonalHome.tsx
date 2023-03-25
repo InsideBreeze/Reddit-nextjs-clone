@@ -1,16 +1,14 @@
 'use client'
 import { authModalAtom } from '@/atoms/authModalState'
 import { createCommunityAtom } from '@/atoms/createCommunityModalState'
-import { auth } from '@/firebase'
-import { useSetAtom } from 'jotai'
+import { userLocalAtom } from '@/atoms/userLocalState'
+import { useAtomValue, useSetAtom } from 'jotai'
 import Image from 'next/image'
-import React from 'react'
-import { useAuthState } from 'react-firebase-hooks/auth'
 
 const PersonalHome = () => {
   const setCommunityModal = useSetAtom(createCommunityAtom)
   const setAuthModalState = useSetAtom(authModalAtom)
-  const [user] = useAuthState(auth)
+  const user = useAtomValue(userLocalAtom)
   return (
     <div className="">
       <div className="bg-[url('/images/home-banner.png')] w-full h-[34px]">

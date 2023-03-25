@@ -1,11 +1,14 @@
+import { userLocalAtom } from '@/atoms/userLocalState'
 import { auth, db } from '@/firebase'
 import { doc, setDoc } from 'firebase/firestore'
+import { useSetAtom } from 'jotai'
 import Image from 'next/image'
 import { useSignInWithGoogle } from 'react-firebase-hooks/auth'
 
 const OAuthButtons = () => {
   const [signInWithGoogle] = useSignInWithGoogle(auth)
 
+  const setUserLocalState = useSetAtom(userLocalAtom)
   const onSignIn = async () => {
     const userCred = await signInWithGoogle()
     if (userCred) {
@@ -13,6 +16,7 @@ const OAuthButtons = () => {
         doc(db, `users/${userCred.user.uid}`),
         JSON.parse(JSON.stringify(userCred.user))
       )
+      setUserLocalState(userCred.user)
     }
   }
 

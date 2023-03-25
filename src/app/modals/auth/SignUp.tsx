@@ -1,11 +1,11 @@
 import { authModalAtom } from '@/atoms/authModalState'
+import { userLocalAtom } from '@/atoms/userLocalState'
 import { auth, db } from '@/firebase'
 import Spinner from '@/utils/Spinner'
 import { doc, setDoc } from 'firebase/firestore'
 import { useSetAtom } from 'jotai'
 import React, { useState } from 'react'
 import {
-  useAuthState,
   useCreateUserWithEmailAndPassword,
   useUpdateProfile,
 } from 'react-firebase-hooks/auth'
@@ -19,8 +19,7 @@ const SignUp = () => {
 
   const [signUpError, setSignUpError] = useState('')
 
-  const [user] = useAuthState(auth)
-
+  const setUserLocalState = useSetAtom(userLocalAtom)
   const [createUserWithEmailAndPassword, _, loading, error] =
     useCreateUserWithEmailAndPassword(auth)
 
@@ -53,6 +52,8 @@ const SignUp = () => {
           doc(db, `users/${userCred.user.uid}`),
           JSON.parse(JSON.stringify(userCred.user))
         )
+
+        setUserLocalState(userCred.user)
       }
     } catch (error: any) {
       setSignUpError(error.message)

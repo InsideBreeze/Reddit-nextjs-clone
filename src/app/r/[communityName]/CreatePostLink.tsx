@@ -1,7 +1,8 @@
 'use client'
 import { authModalAtom } from '@/atoms/authModalState'
+import { userLocalAtom } from '@/atoms/userLocalState'
 import { auth } from '@/firebase'
-import { useSetAtom } from 'jotai'
+import { useAtomValue, useSetAtom } from 'jotai'
 import { useRouter } from 'next/navigation'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { BsLink45Deg, BsReddit } from 'react-icons/bs'
@@ -10,7 +11,8 @@ interface Props {
   communityName?: string
 }
 const CreatePostLink = ({ communityName }: Props) => {
-  const [user] = useAuthState(auth)
+  //const [user] = useAuthState(auth)
+  const user = useAtomValue(userLocalAtom)
   const router = useRouter()
   const setAuthModalState = useSetAtom(authModalAtom)
 
