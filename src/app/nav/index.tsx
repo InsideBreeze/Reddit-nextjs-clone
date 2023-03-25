@@ -1,28 +1,20 @@
 'use client'
-import Image from 'next/image'
-import React from 'react'
-import SearchInput from './SearchInput'
-import RightContent from './RightContent'
-import Directory from './Directory'
-import { useAuthState } from 'react-firebase-hooks/auth'
-import { auth } from '@/firebase'
-import { useRouter } from 'next/navigation'
-import { useSetAtom } from 'jotai'
 import { communityStateAtom } from '@/atoms/communityDataState'
+import { auth } from '@/firebase'
+import { useSetAtom } from 'jotai'
+import Image from 'next/image'
+import { useRouter } from 'next/navigation'
+import { useAuthState } from 'react-firebase-hooks/auth'
+import Directory from './Directory'
+import RightContent from './RightContent'
+import SearchInput from './SearchInput'
 
 const Navbar = () => {
   const [user] = useAuthState(auth)
 
-  const setCommunityState = useSetAtom(communityStateAtom)
   const router = useRouter()
 
   const backToHome = () => {
-    // reset the state
-    //
-    // setCommunityState(prev => ({
-    //   ...prev,
-    //   currentCommunity: null
-    // }))
     router.push('/')
   }
   return (

@@ -1,24 +1,15 @@
 'use client'
-import { db } from '@/firebase'
-import {
-  collection,
-  getDocs,
-  onSnapshot,
-  orderBy,
-  query,
-  where,
-} from 'firebase/firestore'
-import React, { useEffect, useState } from 'react'
-import { Community, Post } from '../../../../../types'
-import PostItem from './PostItem'
-import usePosts from '@/hooks/usePosts'
-import PostsLoader from './PostsLoader'
-import { useAtomValue } from 'jotai'
 import { communityStateAtom } from '@/atoms/communityDataState'
+import { db } from '@/firebase'
+import usePosts from '@/hooks/usePosts'
+import { collection, getDocs, orderBy, query, where } from 'firebase/firestore'
+import { useAtomValue } from 'jotai'
+import { useEffect, useState } from 'react'
+import { Post } from '../../../../../types'
+import PostItem from './PostItem'
+import PostsLoader from './PostsLoader'
 
 const Posts = () => {
-  const [posts, setPosts] = useState<Post[]>([])
-
   const { postDataState, setPostDataState } = usePosts()
   const [loading, setLoading] = useState(false)
   const { currentCommunity } = useAtomValue(communityStateAtom)

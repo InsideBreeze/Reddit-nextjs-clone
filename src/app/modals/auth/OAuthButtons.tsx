@@ -1,7 +1,6 @@
 import { auth, db } from '@/firebase'
 import { doc, setDoc } from 'firebase/firestore'
 import Image from 'next/image'
-import React from 'react'
 import { useSignInWithGoogle } from 'react-firebase-hooks/auth'
 
 const OAuthButtons = () => {

@@ -2,13 +2,12 @@ import { db, storage } from '@/firebase'
 import useSelectFile from '@/hooks/useSelectFile'
 import { User } from 'firebase/auth'
 import {
-  doc,
   Timestamp,
-  addDoc,
   collection,
+  doc,
   serverTimestamp,
-  updateDoc,
   setDoc,
+  updateDoc,
 } from 'firebase/firestore'
 import { getDownloadURL, ref, uploadString } from 'firebase/storage'
 import { useRouter } from 'next/navigation'

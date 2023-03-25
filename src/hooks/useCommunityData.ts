@@ -145,7 +145,8 @@ const useCommunityData = (communityName?: string) => {
     setCurrentCommunityLoading(false)
   }
 
-  // when run this hook, it will fetch current Name, if communityName is given
+  // My idea is that if you want to fetch/update the curren community state, just update the community name, then
+  // this function will fetch the data from db
   useEffect(() => {
     if (communityState.currentCommunity?.communityName) {
       console.log('fetch....', communityState?.currentCommunity.communityName)

@@ -11,7 +11,7 @@ import {
   increment,
   writeBatch,
 } from 'firebase/firestore'
-import { useAtom, useAtomValue } from 'jotai'
+import { useAtomValue, useSetAtom } from 'jotai'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
@@ -35,19 +35,14 @@ interface Props {
   homePage?: boolean
 }
 const PostItem = ({ post, isPostPage, homePage }: Props) => {
-  const [postDataState, setPostDataState] = useAtom(postDataAtom)
+  const setPostDataState = useSetAtom(postDataAtom)
   const [user] = useAuthState(auth)
   const [voteStatus, setvoteStatus] = useState(0)
 
   const router = useRouter()
 
-  const communityState = useAtomValue(communityStateAtom)
-
   const onSelectPost = () => {
     if (!isPostPage) {
-      // router.push(
-      //   `/r/${communityState.currentCommunity?.communityName}/comments/${post.id}`
-      // )
       router.push(`/r/${post.communityName}/comments/${post.id}`)
     }
     setPostDataState(prev => ({

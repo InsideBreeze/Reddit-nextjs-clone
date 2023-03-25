@@ -1,14 +1,14 @@
-import { useSetAtom } from 'jotai'
 import { authModalAtom } from '@/atoms/authModalState'
-import React, { useEffect, useState } from 'react'
+import { auth, db } from '@/firebase'
+import Spinner from '@/utils/Spinner'
+import { doc, setDoc } from 'firebase/firestore'
+import { useSetAtom } from 'jotai'
+import React, { useState } from 'react'
 import {
   useAuthState,
   useCreateUserWithEmailAndPassword,
   useUpdateProfile,
 } from 'react-firebase-hooks/auth'
-import { auth, db } from '@/firebase'
-import Spinner from '@/utils/Spinner'
-import { collection, doc, setDoc } from 'firebase/firestore'
 
 const SignUp = () => {
   const [fieldValues, setFieldValues] = useState({

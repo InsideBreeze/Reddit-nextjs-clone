@@ -1,12 +1,13 @@
 'use client'
 import useCommunityData from '@/hooks/useCommunityData'
 import { notFound } from 'next/navigation'
-import About from './About'
+import { useEffect } from 'react'
+import { Community } from '../../../../types'
 import CreatePostLink from './CreatePostLink'
 import Header from './Header'
 import PageContent from './PageContent'
 import Posts from './Posts'
-import { useEffect } from 'react'
+import About from './About'
 
 const CommunityPage = ({ params }: { params: { communityName: string } }) => {
   const {
@@ -22,9 +23,9 @@ const CommunityPage = ({ params }: { params: { communityName: string } }) => {
       currentCommunity: {
         ...prev.currentCommunity,
         communityName: params.communityName,
-      },
+      } as Community,
     }))
-  }, [params.communityName])
+  }, [params.communityName, setCommunityState])
 
   console.log(
     JSON.stringify(communityState.currentCommunity),
@@ -42,11 +43,11 @@ const CommunityPage = ({ params }: { params: { communityName: string } }) => {
               {/* Create Post Link*/}
               <CreatePostLink communityName={params.communityName} />
               {/* Posts */}
-              <Posts community={communityState.currentCommunity} />
+              <Posts />
             </>
             <>
               {/* About */}
-              {/* <About community={communityState.currentCommunity} /> */}
+              <About community={communityState.currentCommunity} />
             </>
           </PageContent>
         </>

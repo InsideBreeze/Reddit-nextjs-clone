@@ -1,13 +1,7 @@
 'use client'
-import { auth, db } from '@/firebase'
-import { useEffect, useState } from 'react'
-import { useAuthState } from 'react-firebase-hooks/auth'
-import { Post } from '../../types'
-import { useAtom, useAtomValue } from 'jotai'
 import { communityStateAtom } from '@/atoms/communityDataState'
-import PageContent from './r/[communityName]/PageContent'
-import PostsLoader from './r/[communityName]/Posts/PostsLoader'
-import CreatePostLink from './r/[communityName]/CreatePostLink'
+import { postDataAtom } from '@/atoms/postDataState'
+import { auth, db } from '@/firebase'
 import {
   collection,
   getDocs,
@@ -16,8 +10,14 @@ import {
   query,
   where,
 } from 'firebase/firestore'
+import { useAtom } from 'jotai'
+import { useEffect, useState } from 'react'
+import { useAuthState } from 'react-firebase-hooks/auth'
+import { Post } from '../../types'
+import CreatePostLink from './r/[communityName]/CreatePostLink'
+import PageContent from './r/[communityName]/PageContent'
 import PostItem from './r/[communityName]/Posts/PostItem'
-import { postDataAtom } from '@/atoms/postDataState'
+import PostsLoader from './r/[communityName]/Posts/PostsLoader'
 import Sidebar from './sidebar'
 
 export default function Home() {
@@ -32,10 +32,6 @@ export default function Home() {
 
   const [communityState, setCommunityState] = useAtom(communityStateAtom)
 
-  console.log(
-    'current community home page',
-    communityState.currentCommunity?.communityName
-  )
   const buildUserHomeFeed = async () => {
     setLoading(true)
     try {
@@ -57,8 +53,6 @@ export default function Home() {
       console.log('buildUserHomeFeed', error)
     }
     setLoading(false)
-
-    // if user have not join any communities yet
   }
 
   const buildNoUserHomeFeed = async () => {
@@ -90,7 +84,7 @@ export default function Home() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, userLoading, communityState.joinedCommunities])
 
-  // reset community state?
+  // reset community state
   useEffect(() => {
     setCommunityState(prev => ({
       ...prev,
