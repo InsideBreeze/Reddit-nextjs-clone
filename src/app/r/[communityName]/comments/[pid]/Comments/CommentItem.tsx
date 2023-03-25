@@ -16,9 +16,11 @@ import {
   getDocs,
   increment,
   onSnapshot,
+  query,
   serverTimestamp,
   setDoc,
   updateDoc,
+  where,
 } from 'firebase/firestore'
 import CommentList from './CommentList'
 import Spinner from '@/utils/Spinner'
@@ -38,7 +40,7 @@ const CommentItem = ({ comment, onDeleteComment, user }: Props) => {
 
   const onSendReply = async () => {
     try {
-      const replyDocRef = doc(collection(db, `comments/${comment.id}/replies`))
+      const replyDocRef = doc(collection(db, `comments`))
       const newReply = {
         id: replyDocRef.id,
         text,
@@ -53,7 +55,8 @@ const CommentItem = ({ comment, onDeleteComment, user }: Props) => {
 
       // add a new reply to comments collection first
       await setDoc(doc(db, `comments/${replyDocRef.id}`), newReply)
-      await setDoc(replyDocRef, newReply)
+      // don't need to
+      //await setDoc(replyDocRef, newReply)
 
       await updateDoc(doc(db, `posts/${comment.postId}`), {
         numberOfComments: increment(1),
@@ -67,9 +70,13 @@ const CommentItem = ({ comment, onDeleteComment, user }: Props) => {
     setLoading(false)
   }
 
+  const repliesQuery = query(
+    collection(db, 'comments'),
+    where('parentId', '==', comment.id)
+  )
   useEffect(
     () =>
-      onSnapshot(collection(db, `comments/${comment.id}/replies`), snapshot => {
+      onSnapshot(repliesQuery, snapshot => {
         setReplies(snapshot.docs.map(doc => doc.data() as Comment))
       }),
     [comment.id]
