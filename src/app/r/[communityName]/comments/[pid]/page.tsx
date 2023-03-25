@@ -27,7 +27,6 @@ const PostPage = ({
   //const [user] = useAuthState(auth)
   const user = useAtomValue(userLocalAtom)
 
-  //   let post =
   const [communityState, setCommunityState] = useAtom(communityStateAtom)
 
   useEffect(() => {
@@ -51,7 +50,6 @@ const PostPage = ({
   // this should run only when the fisrt time?
   useEffect(() => {
     if (communityName && !communityState.currentCommunity) {
-      console.log('community page set current community')
       try {
         getDoc(doc(db, `communities/${communityName}`)).then(docRef => {
           setCommunityState(prev => ({
@@ -64,8 +62,6 @@ const PostPage = ({
       }
     }
   }, [communityName, communityState.currentCommunity, setCommunityState])
-
-  console.log('current community comment page', communityState.currentCommunity)
 
   return (
     <PageContent>

@@ -21,21 +21,12 @@ import PostItem from './r/[communityName]/Posts/PostItem'
 import Sidebar from './sidebar'
 
 export default function Home() {
-  // home feeds with user is logged and user isn't logged
-  // top communities
-  // premium
-  //
-  // fetch joinedCommunities
-  // const [user, userLoading] = useAuthState(auth)
   const [loading, setLoading] = useState(false)
   const [postData, setPostData] = useAtom(postDataAtom)
 
   const [communityState, setCommunityState] = useAtom(communityStateAtom)
   const userValue = useAtomValue(userLocalAtom)
 
-  console.log('user value', userValue)
-
-  // console.log('user', user)
   const buildUserHomeFeed = async () => {
     setLoading(true)
     try {
