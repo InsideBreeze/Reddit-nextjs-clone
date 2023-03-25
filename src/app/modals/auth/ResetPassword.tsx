@@ -1,10 +1,10 @@
 'use client'
 import { authModalAtom } from '@/atoms/authModalState'
-import { useSetAtom } from 'jotai'
-import React, { useState } from 'react'
-import { BsReddit, BsDot } from 'react-icons/bs'
-import { useSendPasswordResetEmail } from 'react-firebase-hooks/auth'
 import { auth } from '@/firebase'
+import { useSetAtom } from 'jotai'
+import { useState } from 'react'
+import { useSendPasswordResetEmail } from 'react-firebase-hooks/auth'
+import { BsDot, BsReddit } from 'react-icons/bs'
 
 const ResetPassword = () => {
   const setAuthModalState = useSetAtom(authModalAtom)
