@@ -14,9 +14,16 @@ import useCommunityData from '@/hooks/useCommunityData'
 const Directory = () => {
   const [isOpen, setIsOpen] = useState(false)
 
-  const { communityState: { currentCommunity, joinedCommunities } } = useCommunityData()
+  const {
+    communityState: { currentCommunity, joinedCommunities },
+  } = useCommunityData()
 
+  // const { currentCommunity, joinedCommunities } =
+  //   useAtomValue(communityStateAtom)
   const router = useRouter()
+
+  console.log('currentComunity direcotry', currentCommunity?.communityName)
+  console.log('joinedCommunities directory', joinedCommunities)
 
   return (
     <>
@@ -65,45 +72,47 @@ const Directory = () => {
             leaveTo="transform opacity-0 scale-95"
           >
             <Menu.Items className="absolute z-50 w-56 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg sm:-left-10 md:right-0 ring-1 ring-black ring-opacity-5 focus:outline-none">
-              <div className="pt-3 px-2">
+              <div className="px-2 pt-3">
                 {joinedCommunities && (
                   <>
-                    <div className='text-xs text-gray-400'>
-                      MODERATING
-                    </div>
-                    {joinedCommunities.filter(community => community.isModerator).map(community => (
-                      <Menu.Item key={community.communityName}>
-                        {({ active }) => (
-                          <button
-                            className={`${'text-gray-900 font-[600]'} group flex w-full items-center rounded-md py-2 text-sm`}
-                          >
-                            <div
-                              className={`${active && 'bg-gray-200 bg-opacity-90'
-                                } flex items-center space-x-2 w-full rounded-sm p-1`}
-                              onClick={() =>
-                                router.push(`/r/${community.communityName}`)
-                              }
+                    <div className="text-xs text-gray-400">MODERATING</div>
+                    {joinedCommunities
+                      .filter(community => community.isModerator)
+                      .map(community => (
+                        <Menu.Item key={community.communityName}>
+                          {({ active }) => (
+                            <button
+                              className={`${'text-gray-900 font-[600]'} group flex w-full items-center rounded-md py-2 text-sm`}
                             >
-                              {community.communityImage ? (
-                                <Image
-                                  src={community.communityImage}
-                                  height={20}
-                                  width={20}
-                                  className="w-6 h-6 mr-1 rounded-full"
-                                  alt=""
-                                />
-                              ) : (
-                                <BsReddit className="w-6 h-6 mr-1" />
-                              )}
-                              <p>r/{community.communityName}</p>
-                            </div>
-                          </button>
-                        )}
-                      </Menu.Item>
-                    ))}
+                              <div
+                                className={`${
+                                  active && 'bg-gray-200 bg-opacity-90'
+                                } flex items-center space-x-2 w-full rounded-sm p-1`}
+                                onClick={() =>
+                                  router.push(`/r/${community.communityName}`)
+                                }
+                              >
+                                {community.communityImage ? (
+                                  <Image
+                                    src={community.communityImage}
+                                    height={20}
+                                    width={20}
+                                    className="w-6 h-6 mr-1 rounded-full"
+                                    alt=""
+                                  />
+                                ) : (
+                                  <BsReddit className="w-6 h-6 mr-1" />
+                                )}
+                                <p>r/{community.communityName}</p>
+                              </div>
+                            </button>
+                          )}
+                        </Menu.Item>
+                      ))}
 
-
-                    <div className='text-xs text-gray-400'>YOUR COMMUNITIES</div>
+                    <div className="text-xs text-gray-400">
+                      YOUR COMMUNITIES
+                    </div>
                     {joinedCommunities.map(community => (
                       <Menu.Item key={community.communityName}>
                         {({ active }) => (
@@ -111,8 +120,9 @@ const Directory = () => {
                             className={`${'text-gray-900 font-[600]'} group flex w-full items-center rounded-md py-2 text-sm`}
                           >
                             <div
-                              className={`${active && 'bg-gray-200 bg-opacity-90'
-                                } flex items-center space-x-2 w-full rounded-sm p-1`}
+                              className={`${
+                                active && 'bg-gray-200 bg-opacity-90'
+                              } flex items-center space-x-2 w-full rounded-sm p-1`}
                               onClick={() =>
                                 router.push(`/r/${community.communityName}`)
                               }
@@ -142,8 +152,9 @@ const Directory = () => {
                       className={`${'text-gray-900 font-[600]'} group flex w-full items-center rounded-md py-2 text-sm`}
                     >
                       <div
-                        className={`${active && 'bg-blue-600 text-white'
-                          } flex items-center space-x-2 w-full rounded-sm p-1`}
+                        className={`${
+                          active && 'bg-blue-600 text-white'
+                        } flex items-center space-x-2 w-full rounded-sm p-1`}
                         onClick={() => setIsOpen(true)}
                       >
                         {/* create community */}

@@ -13,6 +13,8 @@ import { Community, Post } from '../../../../../types'
 import PostItem from './PostItem'
 import usePosts from '@/hooks/usePosts'
 import PostsLoader from './PostsLoader'
+import { useAtomValue } from 'jotai'
+import { communityStateAtom } from '@/atoms/communityDataState'
 
 interface Props {
   community: Community
@@ -22,6 +24,7 @@ const Posts = ({ community }: Props) => {
 
   const { postDataState, setPostDataState } = usePosts()
   const [loading, setLoading] = useState(false)
+  const { currentCommunity } = useAtomValue(communityStateAtom)
 
   const q = query(
     collection(db, 'posts'),
@@ -56,11 +59,13 @@ const Posts = ({ community }: Props) => {
     setLoading(false)
   }
 
+  console.log('communityName', community.communityName)
   useEffect(() => {
     fetchPosts()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [community.communityName])
+  }, [community.communityName, currentCommunity?.communityName])
 
+  console.log('posts', community.communityName)
   // useEffect(
   //   () =>
   //     onSnapshot(q, snapshot => {

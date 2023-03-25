@@ -53,6 +53,7 @@ const CreateCommunity = ({ isOpen, closeModal }: Props) => {
           throw new Error(`Sorry, /r/${communityName} is already taken`)
         }
         transation.set(communityDocRef, {
+          communityName: communityName,
           createdAt: serverTimestamp(),
           numberOfMembers: 1,
           creatorId: user?.uid,

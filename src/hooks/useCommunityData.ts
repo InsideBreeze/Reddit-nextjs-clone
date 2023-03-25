@@ -13,9 +13,6 @@ import { useEffect, useState } from 'react'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { Community } from '../../types'
 
-interface Props {
-  communityName?: string
-}
 // this hook is used to pull data to state and some other utility functions
 const useCommunityData = (communityName?: string) => {
   const [communityState, setCommunityState] = useAtom(communityStateAtom)
@@ -146,7 +143,7 @@ const useCommunityData = (communityName?: string) => {
       fetchCurrentCommunity()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [communityName])
+  }, [communityName, communityState.currentCommunity?.communityName])
 
   return {
     communityState,

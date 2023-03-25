@@ -1,15 +1,11 @@
 'use client'
-import { auth, db } from '@/firebase'
 import useCommunityData from '@/hooks/useCommunityData'
-import { doc, getDoc } from 'firebase/firestore'
-import { Community } from '../../../../types'
+import { notFound } from 'next/navigation'
 import About from './About'
 import CreatePostLink from './CreatePostLink'
 import Header from './Header'
 import PageContent from './PageContent'
 import Posts from './Posts'
-import { notFound } from 'next/navigation'
-import { useAuthState } from 'react-firebase-hooks/auth'
 
 const CommunityPage = ({ params }: { params: { communityName: string } }) => {
   const { communityState, loading, pageExists } = useCommunityData(

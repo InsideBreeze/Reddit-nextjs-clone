@@ -94,6 +94,7 @@ export default function Home() {
     } else {
       buildNoUserHomeFeed()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, userLoading, communityState.joinedCommunities])
 
   return (

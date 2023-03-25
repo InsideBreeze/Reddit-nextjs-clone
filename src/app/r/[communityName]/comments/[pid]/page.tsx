@@ -63,6 +63,8 @@ const PostPage = ({
     }
   }, [communityName, communityState.currentCommunity, setCommunityState])
 
+  console.log('current community', communityState.currentCommunity)
+
   return (
     <PageContent>
       <>
@@ -75,7 +77,9 @@ const PostPage = ({
       </>
       <>
         {communityState.currentCommunity && (
-          <About community={communityState.currentCommunity} />
+          <>
+            <About community={communityState.currentCommunity} />
+          </>
         )}
       </>
     </PageContent>
