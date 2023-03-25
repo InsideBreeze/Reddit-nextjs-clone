@@ -7,7 +7,7 @@ import { useAuthState } from 'react-firebase-hooks/auth'
 import { BsLink45Deg, BsReddit } from 'react-icons/bs'
 import { HiOutlinePhotograph } from 'react-icons/hi'
 interface Props {
-  communityName: string
+  communityName?: string
 }
 const CreatePostLink = ({ communityName }: Props) => {
   const [user] = useAuthState(auth)

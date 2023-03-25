@@ -1,15 +1,16 @@
 'use client'
+import { createCommunityAtom } from '@/atoms/createCommunityModalState'
 import useCommunityData from '@/hooks/useCommunityData'
 import { Menu, Transition } from '@headlessui/react'
+import { useAtom } from 'jotai'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import { Fragment, useState } from 'react'
+import { Fragment } from 'react'
 import { AiFillHome, AiOutlinePlus } from 'react-icons/ai'
 import { BiChevronDown } from 'react-icons/bi'
 import { BsReddit } from 'react-icons/bs'
+import { Community } from '../../../types'
 import CreateCommunity from '../modals/CreateCommunity'
-import { useAtom } from 'jotai'
-import { createCommunityAtom } from '@/atoms/createCommunityModalState'
 
 const Directory = () => {
   const [isOpen, setIsOpen] = useAtom(createCommunityAtom)
@@ -20,7 +21,6 @@ const Directory = () => {
   } = useCommunityData()
 
   const router = useRouter()
-  console.log('current directory', currentCommunity?.communityName)
 
   const redirectCommunity = (communityName: string) => {
     router.push(`/r/${communityName}`)
@@ -29,7 +29,7 @@ const Directory = () => {
       currentCommunity: {
         ...prev.currentCommunity,
         communityName,
-      },
+      } as Community,
     }))
   }
 

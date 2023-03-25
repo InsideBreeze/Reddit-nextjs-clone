@@ -16,10 +16,7 @@ import PostsLoader from './PostsLoader'
 import { useAtomValue } from 'jotai'
 import { communityStateAtom } from '@/atoms/communityDataState'
 
-interface Props {
-  communityName: string
-}
-const Posts = ({ communityName }: Props) => {
+const Posts = () => {
   const [posts, setPosts] = useState<Post[]>([])
 
   const { postDataState, setPostDataState } = usePosts()
