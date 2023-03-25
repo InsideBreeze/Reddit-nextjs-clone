@@ -1,3 +1,0 @@
-- store the user to the localStorage
-- comment index, parentId
-- add some skeletons
