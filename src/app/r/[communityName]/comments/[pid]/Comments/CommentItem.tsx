@@ -67,20 +67,6 @@ const CommentItem = ({ comment, onDeleteComment, user }: Props) => {
     setLoading(false)
   }
 
-  const fetchReplies = async () => {
-    try {
-      const repliesRef = await getDocs(
-        collection(db, `comments/${comment.id}/replies`)
-      )
-      setReplies(repliesRef.docs.map(doc => doc.data() as Comment))
-    } catch (error) {
-      console.log('fetchReplies error', error)
-    }
-  }
-  // useEffect(() => {
-  //   fetchReplies()
-  // }, [])
-
   useEffect(
     () =>
       onSnapshot(collection(db, `comments/${comment.id}/replies`), snapshot => {

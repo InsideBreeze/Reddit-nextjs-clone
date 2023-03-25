@@ -1,10 +1,8 @@
 'use client'
 import { authModalAtom } from '@/atoms/authModalState'
 import { userLocalAtom } from '@/atoms/userLocalState'
-import { auth } from '@/firebase'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { useRouter } from 'next/navigation'
-import { useAuthState } from 'react-firebase-hooks/auth'
 import { BsLink45Deg, BsReddit } from 'react-icons/bs'
 import { HiOutlinePhotograph } from 'react-icons/hi'
 interface Props {
