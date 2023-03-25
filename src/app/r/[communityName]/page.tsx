@@ -28,7 +28,12 @@ const CommunityPage = ({ params }: { params: { communityName: string } }) => {
   }, [params.communityName, setCommunityState])
 
   if (!pageExists) notFound()
-  if (!communityState.currentCommunity?.creatorId) return <p>loading</p>
+  if (!communityState.currentCommunity?.creatorId)
+    return (
+      <div className="flex justify-center items-center">
+        <p>loading</p>
+      </div>
+    )
   return (
     <>
       {communityState.currentCommunity && (

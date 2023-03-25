@@ -28,13 +28,13 @@ const Header = ({ community }: Props) => {
                 width={100}
                 alt=""
                 src={communityState.currentCommunity.communityImage}
-                className="w-[64px] h-[64px] rounded-full"
+                className="w-[64px] h-[64px] rounded-full -top-3 relative shadow-xl"
                 priority
               />
             ) : (
               <BsReddit className="text-[64px] text-brand-100 relative -top-3 rounded-[50%] border-4 border-white" />
             )}
-            <div className="flex py-[10px] px-4 space-x-4">
+            <div className="flex py-[10px] px-3 space-x-4">
               <div>
                 <p className="text-lg font-semibold">
                   {community.communityName}
@@ -47,10 +47,11 @@ const Header = ({ community }: Props) => {
                 <Spinner />
               ) : (
                 <button
-                  className={`border border-blue-500 h-[28px] px-5 ${isJoined
+                  className={`border border-blue-500 h-[28px] px-5 ${
+                    isJoined
                       ? 'text-blue-500 bg-white hover:gray-100'
                       : 'bg-blue-500 text-white hover:bg-blue-600'
-                    }
+                  }
               rounded-full font-semibold`}
                   onClick={() => joinOrLeaveCommunity(isJoined, community)}
                 >
