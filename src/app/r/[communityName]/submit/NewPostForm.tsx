@@ -51,9 +51,10 @@ const tabs: TabItem[] = [
 
 interface Props {
   communityName: string
-  user: User
+  user: User,
+  communityImage?: string
 }
-const NewPostForm = ({ communityName, user }: Props) => {
+const NewPostForm = ({ communityName, user, communityImage }: Props) => {
   const [seletedTab, setSeletedTab] = useState('Post')
   const [fieldValues, setFieldValues] = useState({
     title: '',
@@ -90,6 +91,7 @@ const NewPostForm = ({ communityName, user }: Props) => {
         numberOfComments: 0,
         numberOfVotes: 0,
         creatorName: user.displayName!,
+        communityImage
       }
 
       const postDoc = await setDoc(postRef, newPost)

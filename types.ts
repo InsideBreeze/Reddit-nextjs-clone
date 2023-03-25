@@ -9,7 +9,7 @@ export interface Community {
   privacyType: 'public' | 'restricted' | 'private'
 }
 
-interface User {}
+interface User { }
 
 export interface Post {
   id: string
@@ -22,6 +22,7 @@ export interface Post {
   numberOfComments: number
   numberOfVotes: number
   creatorName: string
+  communityImage?: string
 }
 
 export interface Comment {

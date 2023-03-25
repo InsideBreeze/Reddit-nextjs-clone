@@ -48,8 +48,10 @@ const PostPage = ({
     }
   }, [postDataState.posts, postId])
 
+  // this should run only when the fisrt time?
   useEffect(() => {
     if (communityName && !communityState.currentCommunity) {
+      console.log('community page set current community')
       try {
         getDoc(doc(db, `communities/${communityName}`)).then(docRef => {
           setCommunityState(prev => ({
@@ -63,7 +65,7 @@ const PostPage = ({
     }
   }, [communityName, communityState.currentCommunity, setCommunityState])
 
-  console.log('current community', communityState.currentCommunity)
+  console.log('current community comment page', communityState.currentCommunity)
 
   return (
     <PageContent>

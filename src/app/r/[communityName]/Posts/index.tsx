@@ -32,12 +32,6 @@ const Posts = ({ community }: Props) => {
     orderBy('createdAt', 'desc')
   )
 
-  // fetch posts to state, then retritive them
-
-  // const fetchPosts = async () => {
-  //   const postDocs =
-  // }
-
   const fetchPosts = async () => {
     setLoading(true)
     try {
@@ -47,10 +41,10 @@ const Posts = ({ community }: Props) => {
         ...prev,
         posts: postDocs.docs.map(
           doc =>
-            ({
-              ...doc.data(),
-              id: doc.id,
-            } as Post)
+          ({
+            ...doc.data(),
+            id: doc.id,
+          } as Post)
         ),
       }))
     } catch (error) {
@@ -59,13 +53,11 @@ const Posts = ({ community }: Props) => {
     setLoading(false)
   }
 
-  console.log('communityName', community.communityName)
   useEffect(() => {
     fetchPosts()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [community.communityName, currentCommunity?.communityName])
 
-  console.log('posts', community.communityName)
   // useEffect(
   //   () =>
   //     onSnapshot(q, snapshot => {
@@ -82,7 +74,6 @@ const Posts = ({ community }: Props) => {
   //   [q]
   // )
 
-  console.log('posts', posts)
 
   return (
     <>

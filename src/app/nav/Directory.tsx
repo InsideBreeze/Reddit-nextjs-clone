@@ -1,15 +1,13 @@
 'use client'
+import useCommunityData from '@/hooks/useCommunityData'
 import { Menu, Transition } from '@headlessui/react'
+import Image from 'next/image'
+import { useRouter } from 'next/navigation'
 import { Fragment, useState } from 'react'
 import { AiFillHome, AiOutlinePlus } from 'react-icons/ai'
 import { BiChevronDown } from 'react-icons/bi'
-import CreateCommunity from '../modals/CreateCommunity'
-import { useAtomValue } from 'jotai'
-import { communityStateAtom } from '@/atoms/communityDataState'
-import Image from 'next/image'
 import { BsReddit } from 'react-icons/bs'
-import { useRouter } from 'next/navigation'
-import useCommunityData from '@/hooks/useCommunityData'
+import CreateCommunity from '../modals/CreateCommunity'
 
 const Directory = () => {
   const [isOpen, setIsOpen] = useState(false)
@@ -18,12 +16,8 @@ const Directory = () => {
     communityState: { currentCommunity, joinedCommunities },
   } = useCommunityData()
 
-  // const { currentCommunity, joinedCommunities } =
-  //   useAtomValue(communityStateAtom)
   const router = useRouter()
-
-  console.log('currentComunity direcotry', currentCommunity?.communityName)
-  console.log('joinedCommunities directory', joinedCommunities)
+  console.log('current directory', currentCommunity?.communityName)
 
   return (
     <>

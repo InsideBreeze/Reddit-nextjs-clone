@@ -18,8 +18,6 @@ import {
 } from 'firebase/firestore'
 import PostItem from './r/[communityName]/Posts/PostItem'
 import { postDataAtom } from '@/atoms/postDataState'
-import Premium from './sidebar/Premium'
-import PersonalHome from './sidebar/PersonalHome'
 import Sidebar from './sidebar'
 
 export default function Home() {
@@ -34,6 +32,10 @@ export default function Home() {
 
   const communityState = useAtomValue(communityStateAtom)
 
+  console.log(
+    'current community home page',
+    communityState.currentCommunity?.communityName
+  )
   const buildUserHomeFeed = async () => {
     setLoading(true)
     try {
@@ -79,15 +81,6 @@ export default function Home() {
     setLoading(false)
   }
 
-  console.log('joined communities', communityState.joinedCommunities)
-  console.log('selected posts', postData.posts)
-
-  // useEffect(() => {
-  //   if (!user && !userLoading) {
-  //     buildNoUserHomeFeed()
-  //   }
-  // }, [user, userLoading])
-  //
   useEffect(() => {
     if (user && !userLoading && communityState.joinedCommunities.length > 0) {
       buildUserHomeFeed()

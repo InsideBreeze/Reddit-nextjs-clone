@@ -5,11 +5,12 @@ import { TiArrowDownOutline, TiArrowUpOutline } from 'react-icons/ti'
 import { Comment } from '../../../../../../../types'
 import CommentMenu from './CommentMenu'
 
+import { db } from '@/firebase'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
+import { User } from 'firebase/auth'
 import {
   Timestamp,
-  addDoc,
   collection,
   doc,
   getDocs,
@@ -17,10 +18,7 @@ import {
   serverTimestamp,
   setDoc,
   updateDoc,
-  writeBatch,
 } from 'firebase/firestore'
-import { User } from 'firebase/auth'
-import { db } from '@/firebase'
 import CommentList from './CommentList'
 
 dayjs.extend(relativeTime)
@@ -37,7 +35,6 @@ const CommentItem = ({ comment, onDeleteComment, user }: Props) => {
 
   const onSendReply = async () => {
     try {
-      const batch = writeBatch(db)
       const replyDocRef = doc(collection(db, `comments/${comment.id}/replies`))
       const newReply = {
         id: replyDocRef.id,
@@ -57,13 +54,6 @@ const CommentItem = ({ comment, onDeleteComment, user }: Props) => {
       await updateDoc(doc(db, `posts/${comment.postId}`), {
         numberOfComments: increment(1),
       })
-
-      //batch.set(doc(db, `comments/${replyDocRef.id}`), newReply)
-      //batch.set(replyDocRef, newReply)
-      // batch.update(doc(db, `posts/${comment.postId}`), {
-      //   numberOfComments: increment(1),
-      // })
-      // batch.commit()
 
       setText('')
       setOpenReply(false)

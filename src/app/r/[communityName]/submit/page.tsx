@@ -31,7 +31,10 @@ const SubmitPage = ({
             Create a post
           </p>
         </div>
-        <NewPostForm communityName={params.communityName} user={user} />
+        {
+          currentCommunity &&
+          <NewPostForm communityName={params.communityName} user={user} communityImage={currentCommunity.communityImage} />
+        }
       </>
 
       <>{currentCommunity && <About community={currentCommunity} />}</>
