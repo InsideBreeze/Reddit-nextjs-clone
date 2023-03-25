@@ -10,6 +10,7 @@ import {
   getDoc,
   getDocs,
   increment,
+  onSnapshot,
   orderBy,
   query,
   serverTimestamp,
@@ -55,7 +56,7 @@ const Comments = ({ user, post, communityName }: Props) => {
         numberOfComments: increment(1),
       })
       await batch.commit()
-      setComments([newComment as Comment, ...comments])
+      // setComments([newComment as Comment, ...comments])
     } catch (error) {
       console.log('onCreateComment', error)
     }
@@ -70,36 +71,32 @@ const Comments = ({ user, post, communityName }: Props) => {
         numberOfComments: increment(-1),
       })
       await batch.commit()
-      setComments(comments.filter(comment => comment.id !== id))
     } catch (error) {
       console.log('onDeleteComment', error)
     }
   }
 
-  // TODO：comments skeleton, image skeleton
-  const fetchComments = async () => {
-    try {
-      const commentsQuery = query(
-        collection(db, 'comments'),
-        where('parentId', '==', post.id),
-        orderBy('createdAt', 'desc')
-      )
-      const commentsRef = await getDocs(commentsQuery)
-      setComments(
-        commentsRef.docs.map(
-          doc =>
-            ({
-              ...doc.data(),
-            } as Comment)
-        )
-      )
-    } catch (error) {
-      console.log('fetchComments', error)
-    }
-  }
   useEffect(() => {
-    fetchComments()
-  }, [])
+    const commentsQuery = query(
+      collection(db, 'comments'),
+      where('parentId', '==', post.id),
+      orderBy('createdAt', 'desc')
+    )
+    const unsubscribe = () =>
+      onSnapshot(commentsQuery, snapshot => {
+        setComments(
+          snapshot.docs.map(
+            doc =>
+              ({
+                ...doc.data(),
+              } as Comment)
+          )
+        )
+      })
+    return () => {
+      unsubscribe()
+    }
+  }, [post.id])
 
   return (
     <div className="bg-white px-[50px]">

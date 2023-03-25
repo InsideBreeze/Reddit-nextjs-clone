@@ -15,6 +15,7 @@ import {
   doc,
   getDocs,
   increment,
+  onSnapshot,
   serverTimestamp,
   setDoc,
   updateDoc,
@@ -57,7 +58,6 @@ const CommentItem = ({ comment, onDeleteComment, user }: Props) => {
 
       setText('')
       setOpenReply(false)
-      setReplies([newReply as Comment, ...replies])
     } catch (error) {
       console.log('onSendReply error', error)
     }
@@ -73,10 +73,19 @@ const CommentItem = ({ comment, onDeleteComment, user }: Props) => {
       console.log('fetchReplies error', error)
     }
   }
-  useEffect(() => {
-    fetchReplies()
-  }, [])
+  // useEffect(() => {
+  //   fetchReplies()
+  // }, [])
 
+  useEffect(
+    () =>
+      onSnapshot(collection(db, `comments/${comment.id}/replies`), snapshot => {
+        setReplies(snapshot.docs.map(doc => doc.data() as Comment))
+      }),
+    [comment.id]
+  )
+
+  console.log(replies)
   return (
     <div className="relative">
       <span className="w-[2px] absolute bg-gray-300 h-[70%] left-3 top-9 overflow-hidden hover:bg-blue-500 hover:cursor-pointer" />
@@ -99,8 +108,7 @@ const CommentItem = ({ comment, onDeleteComment, user }: Props) => {
             </p>
             <BsDot className="text-[12px] text-gray-400" />
             <p className="text-xs text-gray-500">
-              16 yrs
-              {/* {dayjs(comment?.createdAt.toDate()).fromNow()} */}
+              {dayjs(comment?.createdAt?.toDate()).fromNow()}
             </p>
           </div>
           <p className="my-2">{comment.text}</p>
