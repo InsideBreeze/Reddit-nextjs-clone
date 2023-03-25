@@ -31,5 +31,6 @@ export interface Comment {
   creatorId: string
   creatorAvator: string
   creatorName: string
+  parentId: string
   postId: string
 }

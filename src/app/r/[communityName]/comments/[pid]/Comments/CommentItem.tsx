@@ -15,6 +15,8 @@ import {
   getDocs,
   increment,
   serverTimestamp,
+  setDoc,
+  updateDoc,
   writeBatch,
 } from 'firebase/firestore'
 import { User } from 'firebase/auth'
@@ -44,13 +46,24 @@ const CommentItem = ({ comment, onDeleteComment, user }: Props) => {
         creatorId: user?.uid as string,
         creatorName: user?.displayName,
         creatorAvator: user?.photoURL || '',
-        postId: comment.id,
+        postId: comment.postId,
+        parentId: comment.id,
       }
-      batch.set(replyDocRef, newReply)
-      batch.update(doc(db, `posts/${comment.postId}`), {
+
+      // add a new reply to comments collection first
+      await setDoc(doc(db, `comments/${replyDocRef.id}`), newReply)
+      await setDoc(replyDocRef, newReply)
+
+      await updateDoc(doc(db, `posts/${comment.postId}`), {
         numberOfComments: increment(1),
       })
-      batch.commit()
+
+      //batch.set(doc(db, `comments/${replyDocRef.id}`), newReply)
+      //batch.set(replyDocRef, newReply)
+      // batch.update(doc(db, `posts/${comment.postId}`), {
+      //   numberOfComments: increment(1),
+      // })
+      // batch.commit()
 
       setText('')
       setOpenReply(false)
@@ -96,7 +109,8 @@ const CommentItem = ({ comment, onDeleteComment, user }: Props) => {
             </p>
             <BsDot className="text-[12px] text-gray-400" />
             <p className="text-xs text-gray-500">
-              {dayjs(comment?.createdAt.toDate()).fromNow()}
+              16 yrs
+              {/* {dayjs(comment?.createdAt.toDate()).fromNow()} */}
             </p>
           </div>
           <p className="my-2">{comment.text}</p>

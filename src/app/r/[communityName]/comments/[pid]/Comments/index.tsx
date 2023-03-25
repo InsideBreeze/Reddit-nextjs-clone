@@ -45,6 +45,7 @@ const Comments = ({ user, post, communityName }: Props) => {
       creatorName: user?.displayName,
       creatorAvator: user?.photoURL || '',
       postId: post.id,
+      parentId: post.id, // comment or reply?
     }
     setLoading(true)
     try {
@@ -80,7 +81,7 @@ const Comments = ({ user, post, communityName }: Props) => {
     try {
       const commentsQuery = query(
         collection(db, 'comments'),
-        where('postId', '==', post.id),
+        where('parentId', '==', post.id),
         orderBy('createdAt', 'desc')
       )
       const commentsRef = await getDocs(commentsQuery)
