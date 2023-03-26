@@ -70,15 +70,6 @@ export default function Home() {
     setLoading(false)
   }
 
-  useEffect(() => {
-    if (userValue && communityState.joinedCommunities.length > 0) {
-      buildUserHomeFeed()
-    } else {
-      buildNoUserHomeFeed()
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userValue, communityState.joinedCommunities])
-
   // reset community state
   useEffect(() => {
     setCommunityState(prev => ({
@@ -86,6 +77,20 @@ export default function Home() {
       currentCommunity: null,
     }))
   }, [setCommunityState])
+
+  useEffect(() => {
+    if (userValue && communityState.joinedCommunities.length > 0) {
+      buildUserHomeFeed()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userValue, communityState.joinedCommunities])
+
+  useEffect(() => {
+    if (!userValue || communityState.joinedCommunities.length === 0) {
+      buildNoUserHomeFeed()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userValue, communityState.joinedCommunities])
 
   return (
     <PageContent>
