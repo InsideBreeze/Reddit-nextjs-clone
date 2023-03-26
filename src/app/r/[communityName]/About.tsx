@@ -4,8 +4,7 @@ import { BiDotsHorizontalRounded } from 'react-icons/bi'
 import { RiCakeLine } from 'react-icons/ri'
 import { Community } from '../../../../types'
 import { useRouter } from 'next/navigation'
-import { useAuthState } from 'react-firebase-hooks/auth'
-import { auth, db, storage } from '@/firebase'
+import { db, storage } from '@/firebase'
 import { BsReddit } from 'react-icons/bs'
 import Image from 'next/image'
 import { useRef, useState } from 'react'
@@ -16,6 +15,7 @@ import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { communityStateAtom } from '@/atoms/communityDataState'
 import Spinner from '@/utils/Spinner'
 import { userLocalAtom } from '@/atoms/userLocalState'
+import { authModalAtom } from '@/atoms/authModalState'
 
 interface Props {
   community: Community
@@ -23,7 +23,6 @@ interface Props {
 
 const About = ({ community }: Props) => {
   const router = useRouter()
-  //const [user] = useAuthState(auth)
   const user = useAtomValue(userLocalAtom)
 
   const fileRef = useRef<HTMLInputElement>(null)
@@ -31,6 +30,7 @@ const About = ({ community }: Props) => {
   const [loading, setLoading] = useState(false)
 
   const [communityState, setCommunityState] = useAtom(communityStateAtom)
+  const setAuthModalState = useSetAtom(authModalAtom)
 
   const uploadImage = async () => {
     // upload the data and update the state
@@ -64,9 +64,9 @@ const About = ({ community }: Props) => {
         joinedCommunities: prev.joinedCommunities.map(c =>
           c.communityName === community.communityName
             ? {
-                ...c,
-                communityImage: downloadURL,
-              }
+              ...c,
+              communityImage: downloadURL,
+            }
             : c
         ),
       }))
@@ -106,8 +106,13 @@ const About = ({ community }: Props) => {
             </div>
             <button
               className="w-full py-1 mt-4 bg-blue-500 rounded-full hover:bg-blue-400"
-              onClick={() =>
+              onClick={() => {
+                if (!user) {
+                  setAuthModalState({ view: 'login', open: true })
+                  return
+                }
                 router.push(`/r/${community.communityName}/submit`)
+              }
               }
             >
               Create Post

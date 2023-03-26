@@ -1,12 +1,13 @@
 'use client'
 import { userLocalAtom } from '@/atoms/userLocalState'
 import useCommunityData from '@/hooks/useCommunityData'
-import { useAtomValue } from 'jotai'
+import { useAtomValue, useSetAtom } from 'jotai'
 import { useEffect } from 'react'
 import { Community } from '../../../../../types'
 import About from '../About'
 import PageContent from '../PageContent'
 import NewPostForm from './NewPostForm'
+import { useRouter } from 'next/navigation'
 
 const SubmitPage = ({
   params,
@@ -17,6 +18,7 @@ const SubmitPage = ({
 }) => {
   //const [user] = useAuthState(auth)
   const user = useAtomValue(userLocalAtom)
+  const router = useRouter()
 
   const {
     communityState: { currentCommunity },
@@ -36,8 +38,8 @@ const SubmitPage = ({
     }
   }, [currentCommunity, params.communityName, setCommunityState])
   if (!user) {
-    // TODO: skeleton
-    return <p>loading</p>
+    router.push('/')
+    return
   }
   return (
     <PageContent>
