@@ -1,4 +1,6 @@
+import { userLocalAtom } from '@/atoms/userLocalState'
 import { Menu, Transition } from '@headlessui/react'
+import { useAtomValue } from 'jotai'
 import { Fragment } from 'react'
 import { AiOutlineBell, AiOutlineEdit } from 'react-icons/ai'
 import { BsThreeDots } from 'react-icons/bs'
@@ -7,8 +9,10 @@ import { HiOutlineBookmark } from 'react-icons/hi'
 
 interface Props {
   onDeleteComment: () => void
+  creatorId: string
 }
-const CommentMenu = ({ onDeleteComment }: Props) => {
+const CommentMenu = ({ onDeleteComment, creatorId }: Props) => {
+  const user = useAtomValue(userLocalAtom)
   return (
     <div className="flex items-center">
       <Menu as="div" className="relative inline-block text-center ">
@@ -64,19 +68,21 @@ const CommentMenu = ({ onDeleteComment }: Props) => {
                   </div>
                 )}
               </Menu.Item>
-              <Menu.Item>
-                {({ active }) => (
-                  <div
-                    className={`flex items-center space-x-2 ${
-                      active && 'bg-gray-100 text-black cursor-pointer'
-                    } px-2 py-2 w-full rounded-md text-gray-600`}
-                    onClick={onDeleteComment}
-                  >
-                    <FiTrash className="text-[20px]" />
-                    <p className="text-sm">Delete comment</p>
-                  </div>
-                )}
-              </Menu.Item>
+              {user && user.uid === creatorId && (
+                <Menu.Item>
+                  {({ active }) => (
+                    <div
+                      className={`flex items-center space-x-2 ${
+                        active && 'bg-gray-100 text-black cursor-pointer'
+                      } px-2 py-2 w-full rounded-md text-gray-600`}
+                      onClick={onDeleteComment}
+                    >
+                      <FiTrash className="text-[20px]" />
+                      <p className="text-sm">Delete comment</p>
+                    </div>
+                  )}
+                </Menu.Item>
+              )}
             </div>
           </Menu.Items>
         </Transition>

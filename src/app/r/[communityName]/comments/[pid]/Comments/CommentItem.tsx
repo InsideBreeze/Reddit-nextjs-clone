@@ -133,7 +133,10 @@ const CommentItem = ({ comment, onDeleteComment, user }: Props) => {
               <p className="text-sm font-[500]">Reply</p>
             </div>
             <div className="text-sm font-medium navButton">Share</div>
-            <CommentMenu onDeleteComment={() => onDeleteComment(comment.id)} />
+            <CommentMenu
+              onDeleteComment={() => onDeleteComment(comment.id)}
+              creatorId={comment.creatorId}
+            />
           </div>
           {openReply && (
             <div className="flex flex-col ml-5 bg-[red] my-2">
