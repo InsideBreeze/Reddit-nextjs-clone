@@ -4,7 +4,7 @@ import './globals.css'
 export const metadata = {
   title: 'Reddit Clone',
   description:
-    'This is app is used to learn next.js, and implements the most of utilities of Reddit',
+    'This app is used to learn next.js, and implements some utilities of Reddit',
 }
 
 export default function RootLayout({
