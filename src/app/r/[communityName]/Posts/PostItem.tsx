@@ -25,6 +25,7 @@ import {
   TiArrowUpThick,
 } from 'react-icons/ti'
 import { Post } from '../../../../../types'
+import { authModalAtom } from '@/atoms/authModalState'
 
 dayjs.extend(relativeTime)
 
@@ -38,6 +39,7 @@ const PostItem = ({ post, isPostPage, homePage }: Props) => {
   //const [user] = useAuthState(auth)
   const user = useAtomValue(userLocalAtom)
   const [voteStatus, setvoteStatus] = useState(0)
+  const setAuthModalState = useSetAtom(authModalAtom)
 
   const router = useRouter()
 
@@ -71,6 +73,10 @@ const PostItem = ({ post, isPostPage, homePage }: Props) => {
   // so in the db, votedPost can only be 1 or -1 value
   const onUpVote = async (e: React.MouseEvent<SVGElement, MouseEvent>) => {
     e.stopPropagation()
+    if (!user) {
+      setAuthModalState({ view: 'login', open: true })
+      return
+    }
     /* if vote status:
        0: create doc with vote status 1, then the votes number of post +1
        1: delete doc, then # votes number -1
@@ -139,6 +145,10 @@ const PostItem = ({ post, isPostPage, homePage }: Props) => {
   // the logic is the same as the upvote function
   const onDownVote = async (e: React.MouseEvent<SVGElement, MouseEvent>) => {
     e.stopPropagation()
+    if (!user) {
+      setAuthModalState({ view: 'login', open: true })
+      return
+    }
     /* if vote status:
        - 0: create doc with vote status -1, then the votes number of post -1
        - 1: update doc with vote status -1, then # votes number - 2
