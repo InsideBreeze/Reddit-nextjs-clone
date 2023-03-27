@@ -15,7 +15,7 @@ const Navbar = () => {
     router.push('/')
   }
   return (
-    <div className="bg-white h-[49px] px-3 md:px-[20px] flex items-center justify-between">
+    <div className="bg-white h-[49px] px-3 md:px-[20px] flex items-center justify-between sticky top-0 z-50">
       {/* logo */}
       {/* you can set w and h by css from next13 */}
       <div className="flex items-center cursor-pointer" onClick={backToHome}>
