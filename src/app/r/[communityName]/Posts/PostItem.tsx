@@ -264,7 +264,7 @@ const PostItem = ({ post, isPostPage, homePage }: Props) => {
         )}
       </div>
       <div className={`flex-1 p-2 bg-white ${isPostPage && 'rounded-tr-md'}`}>
-        <div className="text-sm flex space-x-1 items-center">
+        <div className="flex items-center space-x-1 text-sm">
           {homePage && (
             <>
               {post.communityImage ? (
@@ -272,11 +272,11 @@ const PostItem = ({ post, isPostPage, homePage }: Props) => {
                   src={post.communityImage}
                   height={20}
                   width={20}
-                  className="h-6 w-6 rounded-full"
+                  className="w-6 h-6 rounded-full"
                   alt="community"
                 />
               ) : (
-                <BsReddit className="h-6 w-6 text-blue-500" />
+                <BsReddit className="w-6 h-6 text-blue-500" />
               )}
               <p
                 className="font-medium hover:underline"
@@ -299,8 +299,8 @@ const PostItem = ({ post, isPostPage, homePage }: Props) => {
         {post.postImage && (
           <Image
             src={post.postImage}
-            height={460}
-            width={460}
+            height={350}
+            width={350}
             className="max-w-[460px] max-h-[460px] p-4"
             alt=""
             priority
