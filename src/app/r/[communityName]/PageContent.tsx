@@ -1,18 +1,20 @@
 import BackToTopButton from '@/app/BackToTopButton'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 const PageContent = ({ children }: { children: React.ReactNode[] }) => {
   const [show, setShow] = useState(false)
 
-  window.onscroll = e => {
-    if (window.scrollY > 600) {
-      console.log(window.scrollY)
-      setShow(true)
-      console.log('set true')
-    } else {
-      setShow(false)
-    }
-  }
+  useEffect(() => {
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 600) {
+        setShow(true)
+      } else {
+        setShow(false)
+      }
+
+    })
+
+  }, [])
   return (
     <div className="flex justify-center pt-4">
       <div className="flex w-[95%] max-w-[860px]">
