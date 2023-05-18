@@ -20,6 +20,8 @@ import PageContent from './r/[communityName]/PageContent'
 import PostItem from './r/[communityName]/Posts/PostItem'
 import Sidebar from './sidebar'
 
+let counter = 0
+
 export default function Home() {
   const [loading, setLoading] = useState(false)
   const [postData, setPostData] = useAtom(postDataAtom)
@@ -27,6 +29,8 @@ export default function Home() {
   const [communityState, setCommunityState] = useAtom(communityStateAtom)
   const userValue = useAtomValue(userLocalAtom)
 
+  console.log('render count: ', counter++)
+  console.log('user', userValue)
   const buildUserHomeFeed = async () => {
     setLoading(true)
     try {

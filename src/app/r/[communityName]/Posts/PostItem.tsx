@@ -229,9 +229,8 @@ const PostItem = ({ post, isPostPage, homePage }: Props) => {
       onClick={onSelectPost}
     >
       <div
-        className={`flex flex-col items-center px-3 pt-2 text-gray-700 bg-gray-50 ${
-          isPostPage && 'rounded-tl-md bg-white'
-        }`}
+        className={`flex flex-col items-center px-3 pt-2 text-gray-700 bg-gray-50 ${isPostPage && 'rounded-tl-md bg-white'
+          }`}
       >
         {voteStatus === 1 ? (
           <TiArrowUpThick

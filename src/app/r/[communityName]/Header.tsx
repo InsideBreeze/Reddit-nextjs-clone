@@ -47,11 +47,10 @@ const Header = ({ community }: Props) => {
                 <Spinner />
               ) : (
                 <button
-                  className={`border border-blue-500 h-[28px] px-5 ${
-                    isJoined
+                  className={`border border-blue-500 h-[28px] px-5 ${isJoined
                       ? 'text-blue-500 bg-white hover:gray-100'
                       : 'bg-blue-500 text-white hover:bg-blue-600'
-                  }
+                    }
               rounded-full font-semibold`}
                   onClick={() => joinOrLeaveCommunity(isJoined, community)}
                 >

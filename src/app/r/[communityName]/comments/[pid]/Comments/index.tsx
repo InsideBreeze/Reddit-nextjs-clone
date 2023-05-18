@@ -6,6 +6,7 @@ import {
   Timestamp,
   collection,
   doc,
+  getDocs,
   increment,
   onSnapshot,
   orderBy,
@@ -14,7 +15,7 @@ import {
   where,
   writeBatch,
 } from 'firebase/firestore'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { SiGooglemessages } from 'react-icons/si'
 import { Comment, Post } from '../../../../../../../types'
 import CommentList from './CommentList'
@@ -28,6 +29,18 @@ const Comments = ({ user, post, communityName }: Props) => {
   const [text, setText] = useState('')
   const [loading, setLoading] = useState(false)
   const [comments, setComments] = useState<Comment[]>([])
+
+  const [replies, setReplies] = useState<Comment[]>)([])
+
+  const getReplies = useCallback(async (id: string) => {
+    const repliesQuery = query(
+      collection(db, 'comments'),
+      where('parentId', '==', id)
+    )
+    getDocs(repliesQuery).then(result => {
+      setReplies(result.docs.map(doc => doc.data() as Comment))
+    })
+  }, [])
 
   const onCreateComment = async () => {
     const docRef = doc(collection(db, 'comments'))
@@ -79,9 +92,9 @@ const Comments = ({ user, post, communityName }: Props) => {
       setComments(
         snapshot.docs.map(
           doc =>
-            ({
-              ...doc.data(),
-            } as Comment)
+          ({
+            ...doc.data(),
+          } as Comment)
         )
       )
     })
@@ -91,9 +104,9 @@ const Comments = ({ user, post, communityName }: Props) => {
   }, [post.id])
 
   return (
-    <div className="bg-white px-[50px]">
+    <div className="bg-white px-[50px] pb-3">
       {user && (
-        <div className="flex flex-col text-sm focus:border-black">
+        <div className="mb-3 flex flex-col text-sm focus:border-black">
           <p>
             Comment as{' '}
             <span className="text-blue-700 hover:underline hover:cursor-pointer">

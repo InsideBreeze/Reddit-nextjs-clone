@@ -65,14 +65,14 @@ const PostPage = ({
 
   return (
     <PageContent>
-      <>
+      <div>
         {post && (
-          <>
+          <div>
             <PostItem post={post} isPostPage />
             <Comments user={user} post={post} communityName={communityName} />
-          </>
+          </div>
         )}
-      </>
+      </div>
       <>
         {communityState.currentCommunity && (
           <>
