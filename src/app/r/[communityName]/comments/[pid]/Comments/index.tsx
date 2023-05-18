@@ -19,6 +19,8 @@ import { useCallback, useEffect, useState } from 'react'
 import { SiGooglemessages } from 'react-icons/si'
 import { Comment, Post } from '../../../../../../../types'
 import CommentList from './CommentList'
+import { useSetAtom } from 'jotai'
+import { postDataAtom } from '@/atoms/postDataState'
 
 interface Props {
   user?: User | null
@@ -30,17 +32,7 @@ const Comments = ({ user, post, communityName }: Props) => {
   const [loading, setLoading] = useState(false)
   const [comments, setComments] = useState<Comment[]>([])
 
-  const [replies, setReplies] = useState<Comment[]>)([])
-
-  const getReplies = useCallback(async (id: string) => {
-    const repliesQuery = query(
-      collection(db, 'comments'),
-      where('parentId', '==', id)
-    )
-    getDocs(repliesQuery).then(result => {
-      setReplies(result.docs.map(doc => doc.data() as Comment))
-    })
-  }, [])
+  const setPostData = useSetAtom(postDataAtom)
 
   const onCreateComment = async () => {
     const docRef = doc(collection(db, 'comments'))
@@ -68,6 +60,14 @@ const Comments = ({ user, post, communityName }: Props) => {
     }
     setLoading(false)
     setText('')
+    setPostData(prev => ({
+      ...prev,
+      posts: prev.posts.map(p => p.id === post.id ? ({
+        ...p,
+        numberOfComments: p.numberOfComments + 1
+      }) : p)
+    }))
+
   }
   const onDeleteComment = async (id: string) => {
     try {

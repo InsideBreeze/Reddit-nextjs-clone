@@ -24,8 +24,9 @@ import {
 } from 'firebase/firestore'
 import CommentList from './CommentList'
 import Spinner from '@/utils/Spinner'
-import { useSetAtom } from 'jotai'
+import { useAtom, useSetAtom } from 'jotai'
 import { authModalAtom } from '@/atoms/authModalState'
+import { postDataAtom } from '@/atoms/postDataState'
 
 dayjs.extend(relativeTime)
 interface Props {
@@ -35,6 +36,8 @@ interface Props {
 }
 const CommentItem = ({ comment, onDeleteComment, user }: Props) => {
   const [openReply, setOpenReply] = useState(false)
+
+  const [postData, setPostData] = useAtom(postDataAtom)
 
   const [text, setText] = useState('')
   const [replies, setReplies] = useState<Comment[]>([])
@@ -83,6 +86,14 @@ const CommentItem = ({ comment, onDeleteComment, user }: Props) => {
       setText('')
       setOpenReply(false)
       await getReplies()
+
+      setPostData(prev => ({
+        ...prev,
+        posts: prev.posts.map(p => p.id === comment.postId ? ({
+          ...p,
+          numberOfComments: p.numberOfComments + 1
+        }) : p)
+      }))
     } catch (error) {
       console.log('onSendReply error', error)
     }

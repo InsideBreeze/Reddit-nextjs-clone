@@ -9,7 +9,6 @@ export interface Community {
   privacyType: 'public' | 'restricted' | 'private'
 }
 
-interface User { }
 
 export interface Post {
   id: string
