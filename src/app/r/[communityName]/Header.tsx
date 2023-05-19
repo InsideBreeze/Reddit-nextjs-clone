@@ -1,19 +1,19 @@
 'use client'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Community } from '../../../../types'
 import Image from 'next/image'
 import { BsReddit } from 'react-icons/bs'
-import useCommunityData from '@/hooks/useCommunityData'
+import useJoinedCommunities from '@/hooks/useJoinedCommunities'
 import Spinner from '@/utils/Spinner'
 import { useRedditStore } from '@/app/store'
-
 interface Props {
   community: Community
 }
 const Header = ({ community }: Props) => {
-  const { communityState, loading, joinOrLeaveCommunity } = useCommunityData()
+  const { joinedCommunities, loading, joinOrLeaveCommunity } =
+    useJoinedCommunities()
 
-  const isJoined = !!communityState.joinedCommunities.find(
+  const isJoined = !!joinedCommunities.find(
     c => c.communityName === community.communityName
   )
 
@@ -50,8 +50,8 @@ const Header = ({ community }: Props) => {
               ) : (
                 <button
                   className={`border border-blue-500 h-[28px] px-5 ${isJoined
-                    ? 'text-blue-500 bg-white hover:gray-100'
-                    : 'bg-blue-500 text-white hover:bg-blue-600'
+                      ? 'text-blue-500 bg-white hover:gray-100'
+                      : 'bg-blue-500 text-white hover:bg-blue-600'
                     }
               rounded-full font-semibold`}
                   onClick={() => joinOrLeaveCommunity(isJoined, community)}

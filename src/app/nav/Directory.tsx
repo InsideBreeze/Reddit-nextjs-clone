@@ -1,6 +1,6 @@
 'use client'
 import { createCommunityAtom } from '@/atoms/createCommunityModalState'
-import useCommunityData from '@/hooks/useCommunityData'
+import useJoinedCommunities from '@/hooks/useJoinedCommunities'
 import { Menu, Transition } from '@headlessui/react'
 import { useAtom } from 'jotai'
 import Image from 'next/image'
@@ -17,11 +17,12 @@ import { useRedditStore } from '../store'
 const Directory = () => {
   const [isOpen, setIsOpen] = useAtom(createCommunityAtom)
 
-  const {
-    communityState: { currentCommunity, joinedCommunities },
-    setCommunityState,
-  } = useCommunityData()
+  // const {
+  //   communityState: { currentCommunity, joinedCommunities },
+  //   setCommunityState,
+  // } = useJoinedCommunities()
 
+  const { joinedCommunities } = useJoinedCommunities()
   const curr = useRedditStore((state: any) => state.currentCommunity)
 
   const router = useRouter()

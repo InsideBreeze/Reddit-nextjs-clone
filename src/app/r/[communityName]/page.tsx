@@ -1,5 +1,5 @@
 'use client'
-import useCommunityData from '@/hooks/useCommunityData'
+import useCommunityData from '@/hooks/useJoinedCommunities'
 import { notFound } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { Community } from '../../../../types'
@@ -8,15 +8,12 @@ import CreatePostLink from './CreatePostLink'
 import Header from './Header'
 import PageContent from './PageContent'
 import Posts from './Posts'
-import { useRedditStore } from '@/app/store'
-import { doc, getDoc } from 'firebase/firestore'
-import { db } from '@/firebase'
 import { useCurrentCommunity } from '@/hooks/useCurrentCommunity'
 
 const CommunityPage = ({ params }: { params: { communityName: string } }) => {
-
-  const { currentCommunity, communityNotExists } = useCurrentCommunity(params.communityName)
-
+  const { currentCommunity, communityNotExists } = useCurrentCommunity(
+    params.communityName
+  )
 
   if (communityNotExists) notFound()
   if (!currentCommunity)
