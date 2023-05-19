@@ -6,13 +6,19 @@ import { useRouter } from 'next/navigation'
 import Directory from './Directory'
 import RightContent from './RightContent'
 import SearchInput from './SearchInput'
+import { useRedditStore } from '../store'
 
 const Navbar = () => {
   const userValue = useAtomValue(userLocalAtom)
   const router = useRouter()
 
+
+  const setCurrentCommunity = useRedditStore((state: any) => state.setCurrentCommunity)
+
   const backToHome = () => {
     router.push('/')
+    // rest current community
+    setCurrentCommunity(null)
   }
   return (
     <div className="bg-white h-[49px] px-3 md:px-[20px] flex items-center justify-between sticky top-0 z-50">

@@ -74,14 +74,6 @@ export default function Home() {
     setLoading(false)
   }
 
-  // reset community state
-  useEffect(() => {
-    setCommunityState(prev => ({
-      ...prev,
-      currentCommunity: null,
-    }))
-  }, [setCommunityState])
-
   useEffect(() => {
     if (userValue && communityState.joinedCommunities.length > 0) {
       buildUserHomeFeed()

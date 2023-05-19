@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { BsReddit } from 'react-icons/bs'
 import useCommunityData from '@/hooks/useCommunityData'
 import Spinner from '@/utils/Spinner'
+import { useRedditStore } from '@/app/store'
 
 interface Props {
   community: Community
@@ -16,18 +17,19 @@ const Header = ({ community }: Props) => {
     c => c.communityName === community.communityName
   )
 
+  const curr = useRedditStore((state: any) => state.currentCommunity)
   return (
     <div className="h-[146px]">
       <p className="bg-blue-500 h-[50%]" />
       <div className="h-[50%] bg-white">
         <div className="w-[95%] max-w-[860px] mx-auto">
           <div className="flex">
-            {communityState.currentCommunity?.communityImage ? (
+            {curr.communityImage ? (
               <Image
                 height={100}
                 width={100}
                 alt=""
-                src={communityState.currentCommunity.communityImage}
+                src={curr.communityImage}
                 className="w-[64px] h-[64px] rounded-full -top-3 relative shadow-xl"
                 priority
               />
@@ -48,8 +50,8 @@ const Header = ({ community }: Props) => {
               ) : (
                 <button
                   className={`border border-blue-500 h-[28px] px-5 ${isJoined
-                      ? 'text-blue-500 bg-white hover:gray-100'
-                      : 'bg-blue-500 text-white hover:bg-blue-600'
+                    ? 'text-blue-500 bg-white hover:gray-100'
+                    : 'bg-blue-500 text-white hover:bg-blue-600'
                     }
               rounded-full font-semibold`}
                   onClick={() => joinOrLeaveCommunity(isJoined, community)}

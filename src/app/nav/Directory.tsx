@@ -9,8 +9,10 @@ import { Fragment } from 'react'
 import { AiFillHome, AiOutlinePlus } from 'react-icons/ai'
 import { BiChevronDown } from 'react-icons/bi'
 import { BsReddit } from 'react-icons/bs'
+import Link from 'next/link'
 import { Community } from '../../../types'
 import CreateCommunity from '../modals/CreateCommunity'
+import { useRedditStore } from '../store'
 
 const Directory = () => {
   const [isOpen, setIsOpen] = useAtom(createCommunityAtom)
@@ -20,17 +22,12 @@ const Directory = () => {
     setCommunityState,
   } = useCommunityData()
 
+  const curr = useRedditStore((state: any) => state.currentCommunity)
+
   const router = useRouter()
 
   const redirectCommunity = (communityName: string) => {
     router.push(`/r/${communityName}`)
-    setCommunityState(prev => ({
-      ...prev,
-      currentCommunity: {
-        ...prev.currentCommunity,
-        communityName,
-      } as Community,
-    }))
   }
 
   return (
@@ -41,11 +38,11 @@ const Directory = () => {
           <div>
             <Menu.Button className="flex items-center justify-center">
               <div className="flex items-center">
-                {currentCommunity ? (
+                {curr ? (
                   <>
-                    {currentCommunity.communityImage ? (
+                    {curr.communityImage ? (
                       <Image
-                        src={currentCommunity.communityImage}
+                        src={curr.communityImage}
                         height={20}
                         width={20}
                         className="w-[23px] h-[23px] mr-2 rounded-full"
@@ -56,7 +53,7 @@ const Directory = () => {
                     )}
 
                     <p className="hidden font-semibold md:flex">
-                      r/{currentCommunity.communityName}
+                      r/{curr.communityName}
                     </p>
                   </>
                 ) : (
@@ -89,16 +86,13 @@ const Directory = () => {
                       .map(community => (
                         <Menu.Item key={community.communityName}>
                           {({ active }) => (
-                            <button
+                            <Link
                               className={`${'text-gray-900 font-[600]'} group flex w-full items-center rounded-md py-2 text-sm`}
+                              href={`/r/${community.communityName}`}
                             >
                               <div
-                                className={`${
-                                  active && 'bg-gray-200 bg-opacity-90'
-                                } flex items-center space-x-2 w-full rounded-sm p-1`}
-                                onClick={() =>
-                                  redirectCommunity(community.communityName)
-                                }
+                                className={`${active && 'bg-gray-200 bg-opacity-90'
+                                  } flex items-center space-x-2 w-full rounded-sm p-1`}
                               >
                                 {community.communityImage ? (
                                   <Image
@@ -113,7 +107,7 @@ const Directory = () => {
                                 )}
                                 <p>r/{community.communityName}</p>
                               </div>
-                            </button>
+                            </Link>
                           )}
                         </Menu.Item>
                       ))}
@@ -124,16 +118,13 @@ const Directory = () => {
                     {joinedCommunities.map(community => (
                       <Menu.Item key={community.communityName}>
                         {({ active }) => (
-                          <button
+                          <Link
                             className={`${'text-gray-900 font-[600]'} group flex w-full items-center rounded-md py-2 text-sm`}
+                            href={`/r/${community.communityName}`}
                           >
                             <div
-                              className={`${
-                                active && 'bg-gray-200 bg-opacity-90'
-                              } flex items-center space-x-2 w-full rounded-sm p-1`}
-                              onClick={() =>
-                                router.push(`/r/${community.communityName}`)
-                              }
+                              className={`${active && 'bg-gray-200 bg-opacity-90'
+                                } flex items-center space-x-2 w-full rounded-sm p-1`}
                             >
                               {community.communityImage ? (
                                 <Image
@@ -148,7 +139,7 @@ const Directory = () => {
                               )}
                               <p>r/{community.communityName}</p>
                             </div>
-                          </button>
+                          </Link>
                         )}
                       </Menu.Item>
                     ))}
@@ -160,9 +151,8 @@ const Directory = () => {
                       className={`${'text-gray-900 font-[600]'} group flex w-full items-center rounded-md py-2 text-sm`}
                     >
                       <div
-                        className={`${
-                          active && 'bg-blue-600 text-white'
-                        } flex items-center space-x-2 w-full rounded-sm p-1`}
+                        className={`${active && 'bg-blue-600 text-white'
+                          } flex items-center space-x-2 w-full rounded-sm p-1`}
                         onClick={() => setIsOpen(true)}
                       >
                         {/* create community */}

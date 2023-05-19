@@ -1,34 +1,25 @@
 'use client'
 import useCommunityData from '@/hooks/useCommunityData'
 import { notFound } from 'next/navigation'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Community } from '../../../../types'
 import About from './About'
 import CreatePostLink from './CreatePostLink'
 import Header from './Header'
 import PageContent from './PageContent'
 import Posts from './Posts'
+import { useRedditStore } from '@/app/store'
+import { doc, getDoc } from 'firebase/firestore'
+import { db } from '@/firebase'
+import { useCurrentCommunity } from '@/hooks/useCurrentCommunity'
 
 const CommunityPage = ({ params }: { params: { communityName: string } }) => {
-  const {
-    communityState,
-    currentCommunityLoading,
-    pageExists,
-    setCommunityState,
-  } = useCommunityData()
 
-  useEffect(() => {
-    setCommunityState(prev => ({
-      ...prev,
-      currentCommunity: {
-        ...prev.currentCommunity,
-        communityName: params.communityName,
-      } as Community,
-    }))
-  }, [params.communityName, setCommunityState])
+  const { currentCommunity, communityNotExists } = useCurrentCommunity(params.communityName)
 
-  if (!pageExists) notFound()
-  if (!communityState.currentCommunity?.creatorId)
+
+  if (communityNotExists) notFound()
+  if (!currentCommunity)
     return (
       <div className="flex justify-center items-center">
         <p>loading</p>
@@ -36,23 +27,19 @@ const CommunityPage = ({ params }: { params: { communityName: string } }) => {
     )
   return (
     <>
-      {communityState.currentCommunity && (
+      <Header community={currentCommunity} />
+      <PageContent>
         <>
-          <Header community={communityState.currentCommunity} />
-          <PageContent>
-            <>
-              {/* Create Post Link*/}
-              <CreatePostLink communityName={params.communityName} />
-              {/* Posts */}
-              <Posts />
-            </>
-            <>
-              {/* About */}
-              <About community={communityState.currentCommunity} />
-            </>
-          </PageContent>
+          {/* Create Post Link*/}
+          <CreatePostLink communityName={params.communityName} />
+          {/* Posts */}
+          <Posts />
         </>
-      )}
+        <>
+          {/* About */}
+          <About community={currentCommunity} />
+        </>
+      </PageContent>
     </>
   )
 }

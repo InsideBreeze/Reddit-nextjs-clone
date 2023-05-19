@@ -26,6 +26,7 @@ import {
 } from 'react-icons/ti'
 import { Post } from '../../../../../types'
 import { authModalAtom } from '@/atoms/authModalState'
+import { useRedditStore } from '@/app/store'
 
 dayjs.extend(relativeTime)
 
@@ -42,6 +43,9 @@ const PostItem = ({ post, isPostPage, homePage }: Props) => {
   const setAuthModalState = useSetAtom(authModalAtom)
 
   const router = useRouter()
+
+  const setPosts = useRedditStore(state => state.setPosts)
+  const posts = useRedditStore(state => state.posts)
 
   const onSelectPost = () => {
     if (!isPostPage) {
@@ -60,12 +64,8 @@ const PostItem = ({ post, isPostPage, homePage }: Props) => {
     if (isPostPage) {
       router.push(`/r/${post.communityName}`)
     }
-
     // update posts state(cache).
-    setPostDataState(prev => ({
-      ...prev,
-      posts: prev.posts.filter(item => item.id !== post.id),
-    }))
+    setPosts(posts.filter(p => p.id !== post.id))
   }
 
   // I think maybe it's not that hard, maybe I am wrong.

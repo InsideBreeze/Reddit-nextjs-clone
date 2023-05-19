@@ -93,7 +93,6 @@ const NewPostForm = ({ communityName, user, communityImage }: Props) => {
         communityImage: communityImage || '',
       }
 
-      const postDoc = await setDoc(postRef, newPost)
       if (selectedFile) {
         const imageRef = ref(storage, `/posts/${postRef.id}/image`)
         await uploadString(imageRef, selectedFile, 'data_url')

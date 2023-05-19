@@ -8,33 +8,30 @@ import { useEffect, useState } from 'react'
 import { Post } from '../../../../../types'
 import PostItem from './PostItem'
 import PostsLoader from '../../../../utils/PostsLoader'
+import { useRedditStore } from '@/app/store'
 
 const Posts = () => {
   const { postDataState, setPostDataState } = usePosts()
   const [loading, setLoading] = useState(false)
-  const { currentCommunity } = useAtomValue(communityStateAtom)
+  // const { currentCommunity } = useAtomValue(communityStateAtom)
 
+  const posts = useRedditStore(state => state.posts)
+  const setPosts = useRedditStore(state => state.setPosts)
+
+  const currentCommunity = useRedditStore(state => state.currentCommunity)
   const q = query(
     collection(db, 'posts'),
     where('communityName', '==', currentCommunity?.communityName),
     orderBy('createdAt', 'desc')
   )
 
+
   const fetchPosts = async () => {
+    console.log('This will run???')
     setLoading(true)
     try {
       const postDocs = await getDocs(q)
-
-      setPostDataState(prev => ({
-        ...prev,
-        posts: postDocs.docs.map(
-          doc =>
-            ({
-              ...doc.data(),
-              id: doc.id,
-            } as Post)
-        ),
-      }))
+      setPosts(postDocs.docs.map(doc => doc.data() as Post))
     } catch (error) {
       console.log('fetchPosts', error)
     }
@@ -46,6 +43,9 @@ const Posts = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentCommunity?.communityName])
 
+  const handleDeletePost = (id: string) => {
+
+  }
   // useEffect(
   //   () =>
   //     onSnapshot(q, snapshot => {
@@ -68,7 +68,7 @@ const Posts = () => {
         <PostsLoader />
       ) : (
         <div className="">
-          {postDataState.posts.map(post => (
+          {posts.map(post => (
             <PostItem post={post} key={post.id} />
           ))}
         </div>

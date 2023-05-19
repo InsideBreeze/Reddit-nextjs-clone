@@ -16,6 +16,7 @@ import { communityStateAtom } from '@/atoms/communityDataState'
 import Spinner from '@/utils/Spinner'
 import { userLocalAtom } from '@/atoms/userLocalState'
 import { authModalAtom } from '@/atoms/authModalState'
+import { useRedditStore } from '@/app/store'
 
 interface Props {
   community: Community
@@ -29,12 +30,12 @@ const About = ({ community }: Props) => {
   const { selectedFile, setSelectedFile, onSelectFile } = useSelectFile()
   const [loading, setLoading] = useState(false)
 
-  const [communityState, setCommunityState] = useAtom(communityStateAtom)
   const setAuthModalState = useSetAtom(authModalAtom)
 
+
+  const setCurrentCommunity = useRedditStore((state: any) => state.setCurrentCommunity)
   const uploadImage = async () => {
     // upload the data and update the state
-
     setLoading(true)
     try {
       const imageRef = ref(
@@ -56,20 +57,22 @@ const About = ({ community }: Props) => {
           communityImage: downloadURL,
         }
       )
-      setCommunityState(prev => ({
-        currentCommunity: {
-          ...prev.currentCommunity!,
-          communityImage: downloadURL,
-        },
-        joinedCommunities: prev.joinedCommunities.map(c =>
-          c.communityName === community.communityName
-            ? {
-              ...c,
-              communityImage: downloadURL,
-            }
-            : c
-        ),
-      }))
+      // setCommunityState(prev => ({
+      //   currentCommunity: {
+      //     ...prev.currentCommunity!,
+      //     communityImage: downloadURL,
+      //   },
+      //   joinedCommunities: prev.joinedCommunities.map(c =>
+      //     c.communityName === community.communityName
+      //       ? {
+      //         ...c,
+      //         communityImage: downloadURL,
+      //       }
+      //       : c
+      //   ),
+      // }))
+
+      setCurrentCommunity({ ...community, communityImage: downloadURL })
       setSelectedFile('')
     } catch (error) {
       console.log('upload Image', error)
@@ -77,6 +80,7 @@ const About = ({ community }: Props) => {
     setLoading(false)
     // update state
   }
+
   return (
     <div className="flex flex-col w-full">
       <div className="flex items-center justify-between w-full p-3 text-white bg-blue-500 rounded-t-md">
@@ -87,7 +91,7 @@ const About = ({ community }: Props) => {
         <div className="divide-y-[1.5px] divide-gray-300">
           <div className="flex p-2 font-semibold">
             <div className="flex-1">
-              <p>{community.numberOfMembers.toLocaleString()}</p>
+              <p>{community.numberOfMembers?.toLocaleString()}</p>
               <p>Members</p>
             </div>
             <div className="flex-1">
@@ -138,8 +142,7 @@ const About = ({ community }: Props) => {
                   <Image
                     src={
                       selectedFile ||
-                      (communityState.currentCommunity
-                        ?.communityImage as string)
+                      (community.communityImage as string)
                     }
                     height={35}
                     width={35}
