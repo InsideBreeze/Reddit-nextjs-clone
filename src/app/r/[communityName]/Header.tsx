@@ -13,7 +13,7 @@ const Header = ({ community }: Props) => {
   const { joinedCommunities, loading, joinOrLeaveCommunity } =
     useJoinedCommunities()
 
-  const isJoined = joinedCommunities && !!joinedCommunities.find(
+  const isJoined = !!joinedCommunities && !!joinedCommunities.find(
     c => c.communityName === community.communityName
   )
 
