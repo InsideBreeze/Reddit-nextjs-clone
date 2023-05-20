@@ -13,7 +13,7 @@ const Header = ({ community }: Props) => {
   const { joinedCommunities, loading, joinOrLeaveCommunity } =
     useJoinedCommunities()
 
-  const isJoined = !!joinedCommunities.find(
+  const isJoined = joinedCommunities && !!joinedCommunities.find(
     c => c.communityName === community.communityName
   )
 
@@ -50,8 +50,8 @@ const Header = ({ community }: Props) => {
               ) : (
                 <button
                   className={`border border-blue-500 h-[28px] px-5 ${isJoined
-                      ? 'text-blue-500 bg-white hover:gray-100'
-                      : 'bg-blue-500 text-white hover:bg-blue-600'
+                    ? 'text-blue-500 bg-white hover:gray-100'
+                    : 'bg-blue-500 text-white hover:bg-blue-600'
                     }
               rounded-full font-semibold`}
                   onClick={() => joinOrLeaveCommunity(isJoined, community)}
