@@ -1,4 +1,6 @@
 'use client'
+
+import useJoinedCommunities from '@/hooks/useJoinedCommunities'
 import { communityStateAtom } from '@/atoms/communityDataState'
 import { postDataAtom } from '@/atoms/postDataState'
 import { userLocalAtom } from '@/atoms/userLocalState'
@@ -26,7 +28,8 @@ export default function Home() {
   const [loading, setLoading] = useState(false)
   const [postData, setPostData] = useAtom(postDataAtom)
 
-  const [communityState, setCommunityState] = useAtom(communityStateAtom)
+
+  const { joinedCommunities } = useJoinedCommunities()
   const userValue = useAtomValue(userLocalAtom)
 
   console.log('render count: ', counter++)
@@ -34,7 +37,7 @@ export default function Home() {
   const buildUserHomeFeed = async () => {
     setLoading(true)
     try {
-      const communityNames = communityState.joinedCommunities.map(
+      const communityNames = joinedCommunities.map(
         c => c.communityName
       )
       const postsQuery = query(
@@ -75,18 +78,18 @@ export default function Home() {
   }
 
   useEffect(() => {
-    if (userValue && communityState.joinedCommunities.length > 0) {
+    if (userValue && joinedCommunities.length > 0) {
       buildUserHomeFeed()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userValue, communityState.joinedCommunities])
+  }, [userValue, joinedCommunities])
 
   useEffect(() => {
-    if (!userValue || communityState.joinedCommunities.length === 0) {
+    if (!userValue || joinedCommunities.length === 0) {
       buildNoUserHomeFeed()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userValue, communityState.joinedCommunities])
+  }, [userValue, joinedCommunities])
 
   return (
     <PageContent>

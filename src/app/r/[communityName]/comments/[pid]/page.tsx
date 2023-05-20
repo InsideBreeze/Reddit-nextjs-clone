@@ -1,16 +1,17 @@
 'use client'
-import { communityStateAtom } from '@/atoms/communityDataState'
 import { userLocalAtom } from '@/atoms/userLocalState'
 import { db } from '@/firebase'
-import usePosts from '@/hooks/usePosts'
 import { doc, getDoc } from 'firebase/firestore'
-import { useAtom, useAtomValue } from 'jotai'
+import { useAtomValue } from 'jotai'
 import { useEffect, useState } from 'react'
-import { Community, Post } from '../../../../../../types'
+import { Post } from '../../../../../../types'
 import About from '../../About'
 import PageContent from '../../PageContent'
 import PostItem from '../../Posts/PostItem'
 import Comments from './Comments'
+import { useCurrentCommunity } from '@/hooks/useCurrentCommunity'
+import { notFound } from 'next/navigation'
+import { useRedditStore } from '@/app/store'
 
 const PostPage = ({
   params,
@@ -20,17 +21,19 @@ const PostPage = ({
     pid: string
   }
 }) => {
-  const { postDataState } = usePosts()
+
   const { communityName, pid: postId } = params
+  const { currentCommunity, communityNotExists } = useCurrentCommunity(
+    communityName
+  )
+
+  const posts = useRedditStore(state => state.posts)
 
   const [post, setPost] = useState<Post>()
-  //const [user] = useAuthState(auth)
   const user = useAtomValue(userLocalAtom)
 
-  const [communityState, setCommunityState] = useAtom(communityStateAtom)
-
   useEffect(() => {
-    const p = postDataState.posts.find(item => item.id === postId)
+    const p = posts.find(item => item.id === postId)
     if (p) {
       setPost(p)
     } else {
@@ -45,23 +48,12 @@ const PostPage = ({
         console.log('fetch Post', error)
       }
     }
-  }, [postDataState.posts, postId])
+  }, [posts, postId])
 
-  // this should run only when the fisrt time?
-  useEffect(() => {
-    if (communityName && !communityState.currentCommunity) {
-      try {
-        getDoc(doc(db, `communities/${communityName}`)).then(docRef => {
-          setCommunityState(prev => ({
-            ...prev,
-            currentCommunity: docRef.data() as Community,
-          }))
-        })
-      } catch (error) {
-        console.log('fetch current community', error)
-      }
-    }
-  }, [communityName, communityState.currentCommunity, setCommunityState])
+
+  if (communityNotExists) {
+    notFound()
+  }
 
   return (
     <PageContent>
@@ -74,13 +66,12 @@ const PostPage = ({
         )}
       </div>
       <>
-        {communityState.currentCommunity && (
-          <>
-            <About community={communityState.currentCommunity} />
-          </>
-        )}
+        {
+          currentCommunity &&
+          <About community={currentCommunity} />
+        }
       </>
-    </PageContent>
+    </PageContent >
   )
 }
 

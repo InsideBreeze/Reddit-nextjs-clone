@@ -1,31 +1,28 @@
-import { CommunityData, communityStateAtom } from '@/atoms/communityDataState'
+import { CommunityData } from '@/atoms/communityDataState'
 import { userLocalAtom } from '@/atoms/userLocalState'
 import { db } from '@/firebase'
 import {
   collection,
   doc,
-  getDoc,
   getDocs,
   increment,
   writeBatch,
 } from 'firebase/firestore'
-import { useAtom, useAtomValue } from 'jotai'
-import React, { useEffect, useState } from 'react'
+import { useAtomValue } from 'jotai'
+import { useEffect, useState } from 'react'
 import { Community } from '../../types'
 import { useRedditStore } from '@/app/store'
 
 // this hook is used to pull data to state and some other utility functions
-const useCommunityData = (communityName?: string) => {
-  const [loading, setLoading] = useState(false)
+const useJoinedCommunities = () => {
 
-  const [joinedCommunities, setJoinedCommunities] =
-    React.useState<CommunityData[]>([])
+  const joinedCommunities = useRedditStore(state => state.joinedCommunities)
+  const setJoinedCommunities = useRedditStore(state => state.setJoinedCommunities)
+  const [loading, setLoading] = useState(false)
   const user = useAtomValue(userLocalAtom)
 
   const setCurrentCommunity = useRedditStore(state => state.setCurrentCommunity)
   const currentCommunity = useRedditStore(state => state.currentCommunity)
-
-
 
   // for joining or leaving community
   const joinOrLeaveCommunity = (
@@ -41,11 +38,7 @@ const useCommunityData = (communityName?: string) => {
 
   const joinCommunity = async (communityData: Community) => {
     // https://firebase.google.com/docs/firestore/manage-data/transactions
-
-    console.log('join....')
-
     setLoading(true)
-
     try {
       const batch = writeBatch(db)
 
@@ -70,7 +63,7 @@ const useCommunityData = (communityName?: string) => {
       await batch.commit()
 
       // update state communityState
-      setJoinedCommunities([...joinedCommunities, newCommunity])
+      setJoinedCommunities([...joinedCommunities!, newCommunity])
 
       if (currentCommunity) {
         setCurrentCommunity({
@@ -78,7 +71,6 @@ const useCommunityData = (communityName?: string) => {
           numberOfMembers: currentCommunity?.numberOfMembers + 1
         })
       }
-
     } catch (error) {
       console.error('Join community error')
     }
@@ -101,7 +93,7 @@ const useCommunityData = (communityName?: string) => {
       )
 
       await batch.commit()
-      setJoinedCommunities(joinedCommunities.filter(c => c.communityName !== communityName))
+      setJoinedCommunities(joinedCommunities!.filter(c => c.communityName !== communityName))
 
       if (currentCommunity) {
         setCurrentCommunity({
@@ -109,27 +101,28 @@ const useCommunityData = (communityName?: string) => {
           numberOfMembers: currentCommunity.numberOfMembers - 1
         })
       }
-
     } catch (error) {
       console.error('Leave community', error)
     }
     setLoading(false)
-
   }
 
   const getMyCommunities = async () => {
     setLoading(true)
-    try {
-      const communityDocs = await getDocs(
-        collection(db, `users/${user?.uid}/joinedCommunities`)
-      )
-      const communities = communityDocs.docs.map(doc => doc.data() as CommunityData)
-      setJoinedCommunities(communities)
-    } catch (error: any) {
-      console.log('getMyCommunities', error.message)
+    if (!joinedCommunities) {
+      try {
+        const communityDocs = await getDocs(
+          collection(db, `users/${user?.uid}/joinedCommunities`)
+        )
+        const communities = communityDocs.docs.map(doc => doc.data() as CommunityData)
+        setJoinedCommunities(communities)
+      } catch (error: any) {
+        console.log('getMyCommunities', error.message)
+      }
     }
     setLoading(false)
   }
+
   useEffect(() => {
     if (user) {
       getMyCommunities()
@@ -144,4 +137,4 @@ const useCommunityData = (communityName?: string) => {
   }
 }
 
-export default useCommunityData
+export default useJoinedCommunities
