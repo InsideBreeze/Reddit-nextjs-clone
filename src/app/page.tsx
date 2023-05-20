@@ -37,20 +37,22 @@ export default function Home() {
   const buildUserHomeFeed = async () => {
     setLoading(true)
     try {
-      const communityNames = joinedCommunities.map(
-        c => c.communityName
-      )
-      const postsQuery = query(
-        collection(db, 'posts'),
-        where('communityName', 'in', communityNames),
-        orderBy('createdAt', 'desc'),
-        limit(10)
-      )
-      const postDocs = await getDocs(postsQuery)
-      setPostData(prev => ({
-        ...prev,
-        posts: postDocs.docs.map(post => ({ ...post.data() } as Post)),
-      }))
+      if (joinedCommunities) {
+        const communityNames = joinedCommunities.map(
+          c => c.communityName
+        )
+        const postsQuery = query(
+          collection(db, 'posts'),
+          where('communityName', 'in', communityNames),
+          orderBy('createdAt', 'desc'),
+          limit(10)
+        )
+        const postDocs = await getDocs(postsQuery)
+        setPostData(prev => ({
+          ...prev,
+          posts: postDocs.docs.map(post => ({ ...post.data() } as Post)),
+        }))
+      }
     } catch (error) {
       console.log('buildUserHomeFeed', error)
     }
@@ -78,14 +80,14 @@ export default function Home() {
   }
 
   useEffect(() => {
-    if (userValue && joinedCommunities.length > 0) {
+    if (userValue && joinedCommunities && joinedCommunities.length > 0) {
       buildUserHomeFeed()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userValue, joinedCommunities])
 
   useEffect(() => {
-    if (!userValue || joinedCommunities.length === 0) {
+    if (!userValue || (joinedCommunities && joinedCommunities.length) === 0) {
       buildNoUserHomeFeed()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
