@@ -1,19 +1,18 @@
 'use client'
 
-import useJoinedCommunities from '@/hooks/useJoinedCommunities'
-import { communityStateAtom } from '@/atoms/communityDataState'
 import { postDataAtom } from '@/atoms/postDataState'
 import { userLocalAtom } from '@/atoms/userLocalState'
 import { db } from '@/firebase'
+import useJoinedCommunities from '@/hooks/useJoinedCommunities'
 import {
   collection,
   getDocs,
   limit,
-  orderBy,
   query,
+  orderBy,
   where,
 } from 'firebase/firestore'
-import { useAtom, useAtomValue } from 'jotai'
+import { useAtomValue } from 'jotai'
 import { useEffect, useState } from 'react'
 import { Post } from '../../types'
 import PostsLoader from '../utils/PostsLoader'
@@ -21,13 +20,16 @@ import CreatePostLink from './r/[communityName]/CreatePostLink'
 import PageContent from './r/[communityName]/PageContent'
 import PostItem from './r/[communityName]/Posts/PostItem'
 import Sidebar from './sidebar'
+import { useRedditStore } from './store'
 
 let counter = 0
 
 export default function Home() {
   const [loading, setLoading] = useState(false)
-  const [postData, setPostData] = useAtom(postDataAtom)
 
+
+  const posts = useRedditStore(state => state.posts)
+  const setPosts = useRedditStore(state => state.setPosts)
 
   const { joinedCommunities } = useJoinedCommunities()
   const userValue = useAtomValue(userLocalAtom)
@@ -38,9 +40,7 @@ export default function Home() {
     setLoading(true)
     try {
       if (joinedCommunities) {
-        const communityNames = joinedCommunities.map(
-          c => c.communityName
-        )
+        const communityNames = joinedCommunities.map(c => c.communityName)
         const postsQuery = query(
           collection(db, 'posts'),
           where('communityName', 'in', communityNames),
@@ -48,10 +48,7 @@ export default function Home() {
           limit(10)
         )
         const postDocs = await getDocs(postsQuery)
-        setPostData(prev => ({
-          ...prev,
-          posts: postDocs.docs.map(post => ({ ...post.data() } as Post)),
-        }))
+        setPosts(postDocs.docs.map(post => ({ ...post.data() as Post })))
       }
     } catch (error) {
       console.log('buildUserHomeFeed', error)
@@ -68,11 +65,8 @@ export default function Home() {
         limit(10)
       )
       const postDocs = await getDocs(postsQuery)
+      setPosts(postDocs.docs.map(post => ({ ...post.data() } as Post)))
 
-      setPostData(prev => ({
-        ...prev,
-        posts: postDocs.docs.map(post => ({ ...post.data() } as Post)),
-      }))
     } catch (error) {
       console.log('buildNoUserHomeFeed', error)
     }
@@ -101,7 +95,7 @@ export default function Home() {
           <PostsLoader />
         ) : (
           <>
-            {postData.posts.map(post => (
+            {posts && posts.map(post => (
               <PostItem post={post} key={post.id} homePage />
             ))}
           </>

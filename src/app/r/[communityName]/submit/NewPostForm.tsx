@@ -3,8 +3,10 @@ import useSelectFile from '@/hooks/useSelectFile'
 import { User } from 'firebase/auth'
 import {
   Timestamp,
+  addDoc,
   collection,
   doc,
+  getDoc,
   serverTimestamp,
   setDoc,
   updateDoc,
@@ -19,6 +21,8 @@ import { IoDocumentText, IoImageOutline } from 'react-icons/io5'
 import TabItem from './TabItem'
 import TextInputs from './TextInputs'
 import UploadImage from './UploadImage'
+import { useRedditStore } from '@/app/store'
+import { Post } from '../../../../../types'
 
 interface TabItem {
   Icon: IconType
@@ -62,6 +66,8 @@ const NewPostForm = ({ communityName, user, communityImage }: Props) => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
+  const setPosts = useRedditStore(state => state.setPosts)
+  const posts = useRedditStore(state => state.posts)
   const { selectedFile, setSelectedFile, onSelectFile } = useSelectFile()
 
   const router = useRouter()
@@ -91,7 +97,13 @@ const NewPostForm = ({ communityName, user, communityImage }: Props) => {
         numberOfVotes: 0,
         creatorName: user.displayName!,
         communityImage: communityImage || '',
-      }
+      } as Post
+      await setDoc(postRef, newPost)
+
+      const createdPost = (await getDoc(postRef)).data() as Post
+
+      posts ?
+        setPosts([createdPost, ...posts]) : [newPost]
 
       if (selectedFile) {
         const imageRef = ref(storage, `/posts/${postRef.id}/image`)
@@ -103,7 +115,8 @@ const NewPostForm = ({ communityName, user, communityImage }: Props) => {
           postImage: downloadURL,
         })
       }
-      router.back()
+
+      router.push(`/r/${communityName}/comments/${postRef.id}`)
     } catch (error: any) {
       setError(error.message)
     }

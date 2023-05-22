@@ -11,7 +11,7 @@ import PostItem from '../../Posts/PostItem'
 import Comments from './Comments'
 import { useCurrentCommunity } from '@/hooks/useCurrentCommunity'
 import { notFound } from 'next/navigation'
-import { useRedditStore } from '@/app/store'
+import { useCommunityPosts } from '@/hooks/useCommunityPosts'
 
 const PostPage = ({
   params,
@@ -27,25 +27,27 @@ const PostPage = ({
     communityName
   )
 
-  const posts = useRedditStore(state => state.posts)
+  const { posts } = useCommunityPosts(communityName)
 
   const [post, setPost] = useState<Post>()
   const user = useAtomValue(userLocalAtom)
 
   useEffect(() => {
-    const p = posts.find(item => item.id === postId)
-    if (p) {
-      setPost(p)
-    } else {
-      try {
-        getDoc(doc(db, `posts/${postId}`)).then(docRef => {
-          setPost({
-            id: docRef.id,
-            ...docRef.data(),
-          } as Post)
-        })
-      } catch (error) {
-        console.log('fetch Post', error)
+    if (posts) {
+      const p = posts.find(item => item.id === postId)
+      if (p) {
+        setPost(p)
+      } else {
+        try {
+          getDoc(doc(db, `posts/${postId}`)).then(docRef => {
+            setPost({
+              id: docRef.id,
+              ...docRef.data(),
+            } as Post)
+          })
+        } catch (error) {
+          console.log('fetch Post', error)
+        }
       }
     }
   }, [posts, postId])

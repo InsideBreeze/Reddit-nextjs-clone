@@ -1,4 +1,5 @@
 'use client'
+import { useRedditStore } from '@/app/store'
 import { db } from '@/firebase'
 import Spinner from '@/utils/Spinner'
 import { User } from 'firebase/auth'
@@ -6,7 +7,6 @@ import {
   Timestamp,
   collection,
   doc,
-  getDocs,
   increment,
   onSnapshot,
   orderBy,
@@ -15,24 +15,24 @@ import {
   where,
   writeBatch,
 } from 'firebase/firestore'
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { SiGooglemessages } from 'react-icons/si'
 import { Comment, Post } from '../../../../../../../types'
 import CommentList from './CommentList'
-import { useSetAtom } from 'jotai'
-import { postDataAtom } from '@/atoms/postDataState'
 
 interface Props {
   user?: User | null
   post: Post
   communityName: string
 }
-const Comments = ({ user, post, communityName }: Props) => {
+
+const Comments = ({ user, post }: Props) => {
   const [text, setText] = useState('')
   const [loading, setLoading] = useState(false)
   const [comments, setComments] = useState<Comment[]>([])
 
-  const setPostData = useSetAtom(postDataAtom)
+  const setPosts = useRedditStore(state => state.setPosts)
+  const posts = useRedditStore(state => state.posts)
 
   const onCreateComment = async () => {
     const docRef = doc(collection(db, 'comments'))
@@ -60,14 +60,14 @@ const Comments = ({ user, post, communityName }: Props) => {
     }
     setLoading(false)
     setText('')
-    setPostData(prev => ({
-      ...prev,
-      posts: prev.posts.map(p => p.id === post.id ? ({
-        ...p,
-        numberOfComments: p.numberOfComments + 1
-      }) : p)
-    }))
 
+    setPosts(
+      posts!.map(p =>
+        p.id === post.id
+          ? { ...p, numberOfComments: p.numberOfComments + 1 }
+          : p
+      )
+    )
   }
   const onDeleteComment = async (id: string) => {
     try {
@@ -77,6 +77,14 @@ const Comments = ({ user, post, communityName }: Props) => {
         numberOfComments: increment(-1),
       })
       await batch.commit()
+      setPosts(
+        posts!.map(p =>
+          p.id === post.id
+            ? { ...p, numberOfComments: p.numberOfComments - 1 }
+            : p
+        )
+      )
+      setComments(comments => comments.filter(c => c.id !== id))
     } catch (error) {
       console.log('onDeleteComment', error)
     }

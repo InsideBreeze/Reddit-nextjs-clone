@@ -5,17 +5,23 @@ import { CommunityData } from '@/atoms/communityDataState';
 interface RedditState {
   currentCommunity: Community | null;
   setCurrentCommunity: (currentCommunity: Community) => void;
-  posts: Post[];
+  posts: Post[] | undefined;
   setPosts: (posts: Post[]) => void;
   joinedCommunities: CommunityData[] | null;
-  setJoinedCommunities: (communities: CommunityData[]) => void
+  setJoinedCommunities: (communities: CommunityData[]) => void;
+  homePosts: Post[];
+  setHomePosts: (posts: Post[]) => void;
 }
 
 export const useRedditStore = create<RedditState>(set => ({
   currentCommunity: null,
-  posts: [],
+  posts: undefined,
   joinedCommunities: null,
+  homePosts: [],
   setCurrentCommunity: (community) => set(state => ({ ...state, currentCommunity: community })),
   setPosts: (posts) => set(state => ({ ...state, posts: posts })),
-  setJoinedCommunities: (communities) => set(state => ({ ...state, joinedCommunities: communities }))
+  setJoinedCommunities: (communities) => set(state => ({ ...state, joinedCommunities: communities })),
+  setHomePosts: (posts) => set(state => ({ ...state, homePosts: posts }))
 }))
+
+

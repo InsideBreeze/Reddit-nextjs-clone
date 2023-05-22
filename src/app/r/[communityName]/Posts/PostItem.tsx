@@ -34,10 +34,9 @@ interface Props {
   post: Post
   isPostPage?: boolean
   homePage?: boolean
+  onDeletePost?: () => void
 }
-const PostItem = ({ post, isPostPage, homePage }: Props) => {
-  const setPostDataState = useSetAtom(postDataAtom)
-  //const [user] = useAuthState(auth)
+const PostItem = ({ post, isPostPage, homePage, onDeletePost }: Props) => {
   const user = useAtomValue(userLocalAtom)
   const [voteStatus, setvoteStatus] = useState(0)
   const setAuthModalState = useSetAtom(authModalAtom)
@@ -51,10 +50,6 @@ const PostItem = ({ post, isPostPage, homePage }: Props) => {
     if (!isPostPage) {
       router.push(`/r/${post.communityName}/comments/${post.id}`)
     }
-    setPostDataState(prev => ({
-      ...prev,
-      selectedPost: post,
-    }))
   }
   const onDelete = async (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     e.stopPropagation()
@@ -65,7 +60,9 @@ const PostItem = ({ post, isPostPage, homePage }: Props) => {
       router.push(`/r/${post.communityName}`)
     }
     // update posts state(cache).
-    setPosts(posts.filter(p => p.id !== post.id))
+    if (posts) {
+      setPosts(posts.filter(p => p.id !== post.id))
+    }
   }
 
   // I think maybe it's not that hard, maybe I am wrong.
@@ -94,29 +91,23 @@ const PostItem = ({ post, isPostPage, homePage }: Props) => {
         })
         await batch.commit()
         // update the state? yeah
-        setPostDataState(prev => ({
-          ...prev,
-          posts: prev.posts.map(item =>
-            item.id === post.id
-              ? { ...item, numberOfVotes: item.numberOfVotes + 1 }
-              : item
-          ),
-        }))
+        //
+        //
+        if (posts) {
+          setPosts(posts.map(p => p.id === post.id ? { ...p, numberOfVotes: p.numberOfVotes + 1 } : p))
+        }
         setvoteStatus(1)
       } else if (voteStatus === 1) {
+        console.log('run this!')
         batch.delete(doc(db, `users/${user?.uid}/votedPosts/${post.id}`))
         batch.update(doc(db, `posts/${post.id}`), {
           numberOfVotes: increment(-1),
         })
         await batch.commit()
-        setPostDataState(prev => ({
-          ...prev,
-          posts: prev.posts.map(item =>
-            item.id === post.id
-              ? { ...item, numberOfVotes: item.numberOfVotes - 1 }
-              : item
-          ),
-        }))
+
+        if (posts) {
+          setPosts(posts.map(p => p.id === post.id ? { ...p, numberOfVotes: p.numberOfVotes - 1 } : p))
+        }
         setvoteStatus(0)
       } else {
         batch.update(doc(db, `users/${user?.uid}/votedPosts/${post.id}`), {
@@ -127,14 +118,9 @@ const PostItem = ({ post, isPostPage, homePage }: Props) => {
         })
         await batch.commit()
 
-        setPostDataState(prev => ({
-          ...prev,
-          posts: prev.posts.map(item =>
-            item.id === post.id
-              ? { ...item, numberOfVotes: item.numberOfVotes + 2 }
-              : item
-          ),
-        }))
+        if (posts) {
+          setPosts(posts.map(p => p.id === post.id ? { ...p, numberOfVotes: p.numberOfVotes + 2 } : p))
+        }
         setvoteStatus(1)
       }
     } catch (error) {
@@ -166,14 +152,10 @@ const PostItem = ({ post, isPostPage, homePage }: Props) => {
         })
         await batch.commit()
         // update the state? yeah
-        setPostDataState(prev => ({
-          ...prev,
-          posts: prev.posts.map(item =>
-            item.id === post.id
-              ? { ...item, numberOfVotes: item.numberOfVotes - 1 }
-              : item
-          ),
-        }))
+
+        if (posts) {
+          setPosts(posts.map(p => p.id === post.id ? { ...p, numberOfVotes: p.numberOfVotes - 1 } : p))
+        }
         setvoteStatus(-1)
       } else if (voteStatus === 1) {
         batch.update(doc(db, `users/${user?.uid}/votedPosts/${post.id}`), {
@@ -184,14 +166,9 @@ const PostItem = ({ post, isPostPage, homePage }: Props) => {
         })
         await batch.commit()
 
-        setPostDataState(prev => ({
-          ...prev,
-          posts: prev.posts.map(item =>
-            item.id === post.id
-              ? { ...item, numberOfVotes: item.numberOfVotes - 2 }
-              : item
-          ),
-        }))
+        if (posts) {
+          setPosts(posts.map(p => p.id === post.id ? { ...p, numberOfVotes: p.numberOfVotes - 2 } : p))
+        }
         setvoteStatus(-1)
       } else {
         batch.delete(doc(db, `users/${user?.uid}/votedPosts/${post.id}`))
@@ -199,14 +176,10 @@ const PostItem = ({ post, isPostPage, homePage }: Props) => {
           numberOfVotes: increment(1),
         })
         await batch.commit()
-        setPostDataState(prev => ({
-          ...prev,
-          posts: prev.posts.map(item =>
-            item.id === post.id
-              ? { ...item, numberOfVotes: item.numberOfVotes + 1 }
-              : item
-          ),
-        }))
+
+        if (posts) {
+          setPosts(posts.map(p => p.id === post.id ? { ...p, numberOfVotes: p.numberOfVotes + 1 } : p))
+        }
         setvoteStatus(0)
       }
     } catch (error) {
@@ -216,13 +189,16 @@ const PostItem = ({ post, isPostPage, homePage }: Props) => {
 
   // fetch current post vote status
   useEffect(() => {
+    console.log('vote status')
     getDoc(doc(db, `users/${user?.uid}/votedPosts/${post.id}`)).then(docRef => {
       if (docRef.exists()) {
+        console.log('vote status', docRef.data())
         setvoteStatus(docRef.data().voteStatus)
       }
     })
   }, [post.id, user?.uid])
 
+  console.log('vote status....', voteStatus)
   return (
     <div
       className={`flex ${!isPostPage && 'cursor-pointer mt-4'} rounded-xl`}

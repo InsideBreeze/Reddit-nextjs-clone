@@ -1,11 +1,14 @@
 import Image from 'next/image'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { BsChat, BsDot, BsReddit } from 'react-icons/bs'
 import { TiArrowDownOutline, TiArrowUpOutline } from 'react-icons/ti'
 import { Comment } from '../../../../../../../types'
 import CommentMenu from './CommentMenu'
 
+import { useRedditStore } from '@/app/store'
+import { authModalAtom } from '@/atoms/authModalState'
 import { db } from '@/firebase'
+import Spinner from '@/utils/Spinner'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { User } from 'firebase/auth'
@@ -13,7 +16,6 @@ import {
   Timestamp,
   collection,
   doc,
-  getDocs,
   increment,
   onSnapshot,
   query,
@@ -22,11 +24,8 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore'
+import { useSetAtom } from 'jotai'
 import CommentList from './CommentList'
-import Spinner from '@/utils/Spinner'
-import { useAtom, useSetAtom } from 'jotai'
-import { authModalAtom } from '@/atoms/authModalState'
-import { postDataAtom } from '@/atoms/postDataState'
 
 dayjs.extend(relativeTime)
 interface Props {
@@ -37,22 +36,13 @@ interface Props {
 const CommentItem = ({ comment, onDeleteComment, user }: Props) => {
   const [openReply, setOpenReply] = useState(false)
 
-  const [postData, setPostData] = useAtom(postDataAtom)
-
   const [text, setText] = useState('')
   const [replies, setReplies] = useState<Comment[]>([])
   const [loading, setLoading] = useState(false)
   const setAuthModalState = useSetAtom(authModalAtom)
 
-  const getReplies = useCallback(async () => {
-    const repliesQuery = query(
-      collection(db, 'comments'),
-      where('parentId', '==', comment.id)
-    )
-    getDocs(repliesQuery).then(result => {
-      setReplies(result.docs.map(doc => doc.data() as Comment))
-    })
-  }, [])
+  const posts = useRedditStore(state => state.posts)
+  const setPosts = useRedditStore(state => state.setPosts)
 
   const onSendReply = async () => {
     if (!user) {
@@ -71,47 +61,48 @@ const CommentItem = ({ comment, onDeleteComment, user }: Props) => {
         postId: comment.postId,
         parentId: comment.id,
       }
+
+      setText('')
       setLoading(true)
 
       // add a new reply to comments collection first
       await setDoc(doc(db, `comments/${replyDocRef.id}`), newReply)
-      // don't need to
-      //await setDoc(replyDocRef, newReply)
-
       await updateDoc(doc(db, `posts/${comment.postId}`), {
         numberOfComments: increment(1),
       })
-
-
-      setText('')
       setOpenReply(false)
-      await getReplies()
-
-      setPostData(prev => ({
-        ...prev,
-        posts: prev.posts.map(p => p.id === comment.postId ? ({
-          ...p,
-          numberOfComments: p.numberOfComments + 1
-        }) : p)
-      }))
+      setPosts(
+        posts!.map(p =>
+          p.id === comment.postId
+            ? { ...p, numberOfComments: p.numberOfComments + 1 }
+            : p
+        )
+      )
     } catch (error) {
       console.log('onSendReply error', error)
     }
     setLoading(false)
   }
 
-  // useEffect(
-  //   () =>
-  //     onSnapshot(repliesQuery, snapshot => {
-  //       setReplies(snapshot.docs.map(doc => doc.data() as Comment))
-  //     }),
-  //   [repliesQuery]
-  // )
-  //
-  //
-
   useEffect(() => {
-    getReplies()
+    const repliesQuery = query(
+      collection(db, 'comments'),
+      where('parentId', '==', comment.id)
+    )
+
+    const unsubscribe = onSnapshot(repliesQuery, snapshot => {
+      setReplies(
+        snapshot.docs.map(
+          doc =>
+            ({
+              ...doc.data(),
+            } as Comment)
+        )
+      )
+    })
+    return () => {
+      unsubscribe()
+    }
   }, [])
 
   return (

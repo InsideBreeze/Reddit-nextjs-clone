@@ -1,21 +1,22 @@
 'use client'
-import useCommunityData from '@/hooks/useJoinedCommunities'
 import { notFound } from 'next/navigation'
-import { useEffect, useState } from 'react'
-import { Community } from '../../../../types'
 import About from './About'
 import CreatePostLink from './CreatePostLink'
 import Header from './Header'
 import PageContent from './PageContent'
 import Posts from './Posts'
 import { useCurrentCommunity } from '@/hooks/useCurrentCommunity'
+import { useCommunityPosts } from '@/hooks/useCommunityPosts'
 
 const CommunityPage = ({ params }: { params: { communityName: string } }) => {
   const { currentCommunity, communityNotExists } = useCurrentCommunity(
     params.communityName
   )
 
+  const { loading, posts } = useCommunityPosts(params.communityName)
+
   if (communityNotExists) notFound()
+
   if (!currentCommunity)
     return (
       <div className="flex justify-center items-center">
@@ -30,7 +31,10 @@ const CommunityPage = ({ params }: { params: { communityName: string } }) => {
           {/* Create Post Link*/}
           <CreatePostLink communityName={params.communityName} />
           {/* Posts */}
-          <Posts />
+          {
+            posts &&
+            <Posts posts={posts} loading={loading} />
+          }
         </>
         <>
           {/* About */}
