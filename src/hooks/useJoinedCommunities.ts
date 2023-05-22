@@ -1,4 +1,3 @@
-import { CommunityData } from '@/atoms/communityDataState'
 import { userLocalAtom } from '@/atoms/userLocalState'
 import { db } from '@/firebase'
 import {
@@ -10,7 +9,7 @@ import {
 } from 'firebase/firestore'
 import { useAtomValue } from 'jotai'
 import { useEffect, useState } from 'react'
-import { Community } from '../../types'
+import { Community, CommunityData } from '../../types'
 import { useRedditStore } from '@/app/store'
 
 // this hook is used to pull data to state and some other utility functions

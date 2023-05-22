@@ -1,11 +1,7 @@
 import { create } from 'zustand'
-import { Community, Post } from '../../types'
+import { Community, CommunityData, Post } from '../../types'
 
-interface CommunityData {
-  communityName: string
-  isModerator?: boolean
-  communityImage?: string
-}
+
 
 interface RedditState {
   currentCommunity: Community | null;

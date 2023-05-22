@@ -9,7 +9,11 @@ export interface Community {
   privacyType: 'public' | 'restricted' | 'private'
 }
 
-
+export interface CommunityData {
+  communityName: string
+  isModerator?: boolean
+  communityImage?: string
+}
 export interface Post {
   id: string
   title: string
