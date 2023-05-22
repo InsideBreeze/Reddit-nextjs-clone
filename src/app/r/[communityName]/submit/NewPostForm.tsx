@@ -3,7 +3,6 @@ import useSelectFile from '@/hooks/useSelectFile'
 import { User } from 'firebase/auth'
 import {
   Timestamp,
-  addDoc,
   collection,
   doc,
   getDoc,

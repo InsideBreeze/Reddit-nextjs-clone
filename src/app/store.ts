@@ -24,4 +24,3 @@ export const useRedditStore = create<RedditState>(set => ({
   setHomePosts: (posts) => set(state => ({ ...state, homePosts: posts }))
 }))
 
-

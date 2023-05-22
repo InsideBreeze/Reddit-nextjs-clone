@@ -17,16 +17,15 @@ import {
 } from 'firebase/firestore'
 import { useEffect, useState } from 'react'
 import { SiGooglemessages } from 'react-icons/si'
-import { Comment, Post } from '../../../../../../../types'
+import { Comment } from '../../../../../../../types'
 import CommentList from './CommentList'
 
 interface Props {
   user?: User | null
-  post: Post
-  communityName: string
+  postId: string
 }
 
-const Comments = ({ user, post }: Props) => {
+const Comments = ({ user, postId }: Props) => {
   const [text, setText] = useState('')
   const [loading, setLoading] = useState(false)
   const [comments, setComments] = useState<Comment[]>([])
@@ -43,14 +42,14 @@ const Comments = ({ user, post }: Props) => {
       creatorId: user?.uid!,
       creatorName: user?.displayName,
       creatorAvator: user?.photoURL || '',
-      postId: post.id,
-      parentId: post.id, // comment or reply?
+      postId,
+      parentId: postId, // comment or reply?
     }
     setLoading(true)
     try {
       const batch = writeBatch(db)
       batch.set(docRef, newComment)
-      batch.update(doc(db, `posts/${post.id}`), {
+      batch.update(doc(db, `posts/${postId}`), {
         numberOfComments: increment(1),
       })
       await batch.commit()
@@ -63,7 +62,7 @@ const Comments = ({ user, post }: Props) => {
 
     setPosts(
       posts!.map(p =>
-        p.id === post.id
+        p.id === postId
           ? { ...p, numberOfComments: p.numberOfComments + 1 }
           : p
       )
@@ -73,13 +72,13 @@ const Comments = ({ user, post }: Props) => {
     try {
       const batch = writeBatch(db)
       batch.delete(doc(db, `comments/${id}`))
-      batch.update(doc(db, `posts/${post.id}`), {
+      batch.update(doc(db, `posts/${postId}`), {
         numberOfComments: increment(-1),
       })
       await batch.commit()
       setPosts(
         posts!.map(p =>
-          p.id === post.id
+          p.id === postId
             ? { ...p, numberOfComments: p.numberOfComments - 1 }
             : p
         )
@@ -93,7 +92,7 @@ const Comments = ({ user, post }: Props) => {
   useEffect(() => {
     const commentsQuery = query(
       collection(db, 'comments'),
-      where('parentId', '==', post.id),
+      where('parentId', '==', postId),
       orderBy('createdAt', 'desc')
     )
     const unsubscribe = onSnapshot(commentsQuery, snapshot => {
@@ -109,7 +108,7 @@ const Comments = ({ user, post }: Props) => {
     return () => {
       unsubscribe()
     }
-  }, [post.id])
+  }, [postId])
 
   return (
     <div className="bg-white px-[50px] pb-3">
@@ -124,7 +123,7 @@ const Comments = ({ user, post }: Props) => {
           <textarea
             value={text}
             placeholder="what are your thoughts?"
-            className="px-4 py-2 border outline-none  max-h-[122px] rounded-t-md min-h-[122px]"
+            className="px-4 py-2 border outline-none text-[17px] max-h-[122px] rounded-t-md min-h-[122px]"
             onChange={e => setText(e.target.value)}
           />
           <div className="flex justify-end p-1 bg-gray-100">

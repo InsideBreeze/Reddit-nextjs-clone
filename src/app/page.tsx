@@ -1,6 +1,5 @@
 'use client'
 
-import { postDataAtom } from '@/atoms/postDataState'
 import { userLocalAtom } from '@/atoms/userLocalState'
 import { db } from '@/firebase'
 import useJoinedCommunities from '@/hooks/useJoinedCommunities'
@@ -22,11 +21,9 @@ import PostItem from './r/[communityName]/Posts/PostItem'
 import Sidebar from './sidebar'
 import { useRedditStore } from './store'
 
-let counter = 0
 
 export default function Home() {
   const [loading, setLoading] = useState(false)
-
 
   const posts = useRedditStore(state => state.posts)
   const setPosts = useRedditStore(state => state.setPosts)
@@ -34,8 +31,6 @@ export default function Home() {
   const { joinedCommunities } = useJoinedCommunities()
   const userValue = useAtomValue(userLocalAtom)
 
-  console.log('render count: ', counter++)
-  console.log('user', userValue)
   const buildUserHomeFeed = async () => {
     setLoading(true)
     try {

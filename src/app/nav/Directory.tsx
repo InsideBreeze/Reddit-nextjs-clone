@@ -10,7 +10,6 @@ import { AiFillHome, AiOutlinePlus } from 'react-icons/ai'
 import { BiChevronDown } from 'react-icons/bi'
 import { BsReddit } from 'react-icons/bs'
 import Link from 'next/link'
-import { Community } from '../../../types'
 import CreateCommunity from '../modals/CreateCommunity'
 import { useRedditStore } from '../store'
 
@@ -27,9 +26,6 @@ const Directory = () => {
 
   const router = useRouter()
 
-  const redirectCommunity = (communityName: string) => {
-    router.push(`/r/${communityName}`)
-  }
 
   return (
     <>

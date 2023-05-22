@@ -4,7 +4,7 @@ import { useAtomValue, useSetAtom } from 'jotai'
 import About from '../About'
 import PageContent from '../PageContent'
 import NewPostForm from './NewPostForm'
-import { notFound, useRouter } from 'next/navigation'
+import { notFound } from 'next/navigation'
 import { useCurrentCommunity } from '@/hooks/useCurrentCommunity'
 
 const SubmitPage = ({

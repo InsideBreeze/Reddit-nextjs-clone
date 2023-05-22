@@ -52,7 +52,6 @@ const PostPage = ({
     }
   }, [posts, postId])
 
-
   if (communityNotExists) {
     notFound()
   }
@@ -63,7 +62,7 @@ const PostPage = ({
         {post && (
           <div>
             <PostItem post={post} isPostPage />
-            <Comments user={user} post={post} communityName={communityName} />
+            <Comments user={user} postId={post.id} />
           </div>
         )}
       </div>

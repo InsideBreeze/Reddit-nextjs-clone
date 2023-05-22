@@ -4,6 +4,7 @@ import { userLocalAtom } from '@/atoms/userLocalState'
 import { db } from '@/firebase'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
+import Link from 'next/link'
 import {
   deleteDoc,
   doc,
@@ -36,7 +37,7 @@ interface Props {
   homePage?: boolean
   onDeletePost?: () => void
 }
-const PostItem = ({ post, isPostPage, homePage, onDeletePost }: Props) => {
+const PostItem = ({ post, isPostPage, homePage }: Props) => {
   const user = useAtomValue(userLocalAtom)
   const [voteStatus, setvoteStatus] = useState(0)
   const setAuthModalState = useSetAtom(authModalAtom)
@@ -46,13 +47,8 @@ const PostItem = ({ post, isPostPage, homePage, onDeletePost }: Props) => {
   const setPosts = useRedditStore(state => state.setPosts)
   const posts = useRedditStore(state => state.posts)
 
-  const onSelectPost = () => {
-    if (!isPostPage) {
-      router.push(`/r/${post.communityName}/comments/${post.id}`)
-    }
-  }
   const onDelete = async (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    e.stopPropagation()
+    e.preventDefault()
     // this is relative easy
     await deleteDoc(doc(db, `posts/${post.id}`))
 
@@ -69,7 +65,8 @@ const PostItem = ({ post, isPostPage, homePage, onDeletePost }: Props) => {
   // the logic is pretty clear...
   // so in the db, votedPost can only be 1 or -1 value
   const onUpVote = async (e: React.MouseEvent<SVGElement, MouseEvent>) => {
-    e.stopPropagation()
+    // e.stopPropagation()
+    e.preventDefault()
     if (!user) {
       setAuthModalState({ view: 'login', open: true })
       return
@@ -87,7 +84,7 @@ const PostItem = ({ post, isPostPage, homePage, onDeletePost }: Props) => {
           voteStatus: 1,
         })
         batch.update(doc(db, `posts/${post.id}`), {
-          numberOfVotes: increment(1),
+          numberOfVotes: post.numberOfVotes + 1
         })
         await batch.commit()
         // update the state? yeah
@@ -98,10 +95,9 @@ const PostItem = ({ post, isPostPage, homePage, onDeletePost }: Props) => {
         }
         setvoteStatus(1)
       } else if (voteStatus === 1) {
-        console.log('run this!')
         batch.delete(doc(db, `users/${user?.uid}/votedPosts/${post.id}`))
         batch.update(doc(db, `posts/${post.id}`), {
-          numberOfVotes: increment(-1),
+          numberOfVotes: post.numberOfVotes - 1
         })
         await batch.commit()
 
@@ -114,7 +110,7 @@ const PostItem = ({ post, isPostPage, homePage, onDeletePost }: Props) => {
           voteStatus: 1,
         })
         batch.update(doc(db, `posts/${post.id}`), {
-          numberOfVotes: increment(2),
+          numberOfVotes: post.numberOfVotes + 2
         })
         await batch.commit()
 
@@ -130,7 +126,7 @@ const PostItem = ({ post, isPostPage, homePage, onDeletePost }: Props) => {
 
   // the logic is the same as the upvote function
   const onDownVote = async (e: React.MouseEvent<SVGElement, MouseEvent>) => {
-    e.stopPropagation()
+    e.preventDefault()
     if (!user) {
       setAuthModalState({ view: 'login', open: true })
       return
@@ -148,7 +144,7 @@ const PostItem = ({ post, isPostPage, homePage, onDeletePost }: Props) => {
           voteStatus: -1,
         })
         batch.update(doc(db, `posts/${post.id}`), {
-          numberOfVotes: increment(-1),
+          numberOfVotes: post.numberOfVotes - 1
         })
         await batch.commit()
         // update the state? yeah
@@ -162,7 +158,7 @@ const PostItem = ({ post, isPostPage, homePage, onDeletePost }: Props) => {
           voteStatus: -1,
         })
         batch.update(doc(db, `posts/${post.id}`), {
-          numberOfVotes: increment(-2),
+          numberOfVotes: post.numberOfVotes - 2
         })
         await batch.commit()
 
@@ -173,7 +169,7 @@ const PostItem = ({ post, isPostPage, homePage, onDeletePost }: Props) => {
       } else {
         batch.delete(doc(db, `users/${user?.uid}/votedPosts/${post.id}`))
         batch.update(doc(db, `posts/${post.id}`), {
-          numberOfVotes: increment(1),
+          numberOfVotes: post.numberOfVotes + 1
         })
         await batch.commit()
 
@@ -189,20 +185,19 @@ const PostItem = ({ post, isPostPage, homePage, onDeletePost }: Props) => {
 
   // fetch current post vote status
   useEffect(() => {
-    console.log('vote status')
     getDoc(doc(db, `users/${user?.uid}/votedPosts/${post.id}`)).then(docRef => {
       if (docRef.exists()) {
-        console.log('vote status', docRef.data())
         setvoteStatus(docRef.data().voteStatus)
       }
     })
   }, [post.id, user?.uid])
 
-  console.log('vote status....', voteStatus)
   return (
-    <div
+    <Link
       className={`flex ${!isPostPage && 'cursor-pointer mt-4'} rounded-xl`}
-      onClick={onSelectPost}
+      href={
+        `/r/${post.communityName}/comments/${post.id}`
+      }
     >
       <div
         className={`flex flex-col items-center px-3 pt-2 text-gray-700 bg-gray-50 ${isPostPage && 'rounded-tl-md bg-white'
@@ -253,15 +248,12 @@ const PostItem = ({ post, isPostPage, homePage, onDeletePost }: Props) => {
               ) : (
                 <BsReddit className="w-6 h-6 text-blue-500" />
               )}
-              <p
+              <Link
                 className="font-medium hover:underline"
-                onClick={e => {
-                  e.stopPropagation()
-                  router.push(`/r/${post.communityName}`)
-                }}
+                href={`/r/${post.communityName}`}
               >
                 r/{post.communityName}
-              </p>
+              </Link>
 
               <BsDot className="text-[10px]" />
             </>
@@ -303,7 +295,7 @@ const PostItem = ({ post, isPostPage, homePage, onDeletePost }: Props) => {
           )}
         </div>
       </div>
-    </div>
+    </Link>
   )
 }
 

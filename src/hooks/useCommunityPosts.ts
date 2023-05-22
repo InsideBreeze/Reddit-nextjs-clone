@@ -18,7 +18,6 @@ export function useCommunityPosts(communityName: string) {
 
 
   const fetchPosts = async () => {
-    console.log('This will run???')
     setLoading(true)
     try {
       const postDocs = await getDocs(q)

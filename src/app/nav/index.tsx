@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import Directory from './Directory'
 import RightContent from './RightContent'
 import SearchInput from './SearchInput'
+import Link from 'next/link'
 import { useRedditStore } from '../store'
 
 const Navbar = () => {
@@ -15,16 +16,12 @@ const Navbar = () => {
 
   const setCurrentCommunity = useRedditStore((state: any) => state.setCurrentCommunity)
 
-  const backToHome = () => {
-    router.push('/')
-    // rest current community
-    setCurrentCommunity(null)
-  }
   return (
     <div className="bg-white h-[49px] px-3 md:px-[20px] flex items-center justify-between sticky top-0 z-50">
       {/* logo */}
       {/* you can set w and h by css from next13 */}
-      <div className="flex items-center cursor-pointer" onClick={backToHome}>
+      <Link className="flex items-center cursor-pointer" href="/"
+        onClick={() => setCurrentCommunity(null)}>
         <div className="py-2 pr-2">
           <Image
             src="/images/redditFace.svg"
@@ -42,7 +39,7 @@ const Navbar = () => {
           height={18}
           alt=""
         />
-      </div>
+      </Link>
 
       {/* directory */}
       {userValue && <Directory />}
