@@ -94,16 +94,16 @@ const CommentItem = ({ comment, onDeleteComment, user }: Props) => {
       setReplies(
         snapshot.docs.map(
           doc =>
-            ({
-              ...doc.data(),
-            } as Comment)
+          ({
+            ...doc.data(),
+          } as Comment)
         )
       )
     })
     return () => {
       unsubscribe()
     }
-  }, [])
+  }, [comment.id])
 
   return (
     <div className="relative  flex bg-[red">

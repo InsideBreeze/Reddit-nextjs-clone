@@ -1,5 +1,4 @@
 'use client'
-import { postDataAtom } from '@/atoms/postDataState'
 import { userLocalAtom } from '@/atoms/userLocalState'
 import { db } from '@/firebase'
 import dayjs from 'dayjs'
@@ -9,7 +8,6 @@ import {
   deleteDoc,
   doc,
   getDoc,
-  increment,
   writeBatch,
 } from 'firebase/firestore'
 import { useAtomValue, useSetAtom } from 'jotai'
